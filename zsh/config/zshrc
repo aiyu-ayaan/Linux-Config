@@ -1,0 +1,89 @@
+# ── Zsh kit config (sourced from ~/.zshrc) ──────────────────────────────
+# Force a UTF-8 locale (system default "en_IN" is not UTF-8, which breaks btop, icons, etc.)
+if [[ "${LC_ALL:-${LC_CTYPE:-$LANG}}" != *[Uu][Tt][Ff]-#8* ]]; then
+  for _l in en_IN.utf8 en_US.utf8 C.utf8; do
+    if locale -a 2>/dev/null | grep -qix "$_l"; then export LANG="$_l" LC_ALL="$_l"; break; fi
+  done
+  unset _l
+fi
+
+# Instant prompt must stay near the top.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Where this kit lives (set by ~/.zshrc; falls back to this file's location)
+: ${ZSH_KIT:=${${(%):-%N}:A:h:h}}
+export PATH="$HOME/.local/bin:$PATH"
+# Tools whose installers only edit ~/.bashrc
+[[ -d "$HOME/.bun/bin" ]] && export BUN_INSTALL="$HOME/.bun" PATH="$HOME/.bun/bin:$PATH"
+
+# Oh My Zsh
+export ZSH="$ZSH_KIT/oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_CUSTOM="$ZSH_KIT/custom"
+DISABLE_AUTO_UPDATE="true"
+HYPHEN_INSENSITIVE="true"
+COMPLETION_WAITING_DOTS="true"
+
+plugins=(
+  git sudo extract colored-man-pages command-not-found
+  zsh-autosuggestions zsh-completions
+)
+fpath+="$ZSH_CUSTOM/plugins/zsh-completions/src"
+# Real-time type-ahead completion menu (marlonrichert/zsh-autocomplete).
+# Must load BEFORE Oh My Zsh's compinit. Disable with: export ZSH_KIT_AUTOCOMPLETE=0 (in ~/.zshrc, below the kit line)
+if [[ "${ZSH_KIT_AUTOCOMPLETE:-1}" != 0 && -f "$ZSH_CUSTOM/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]]; then
+  source "$ZSH_CUSTOM/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+fi
+source "$ZSH/oh-my-zsh.sh"
+
+# History
+HISTFILE="$HOME/.zsh_history"; HISTSIZE=50000; SAVEHIST=50000
+setopt HIST_IGNORE_ALL_DUPS HIST_REDUCE_BLANKS SHARE_HISTORY INC_APPEND_HISTORY AUTO_CD
+
+# Autosuggestions: grey ghost text, accept with → or Ctrl+Space
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#6c7086"
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+bindkey '^ ' autosuggest-accept
+
+# Completion menu
+zstyle ':completion:*' menu select
+# zsh-autocomplete: Tab cycles the menu, Enter accepts
+bindkey '^[[Z' reverse-menu-complete 2>/dev/null
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# fzf (Ctrl+R history, Ctrl+T files, Alt+C cd)
+if (( $+commands[fzf] )); then
+  source <(fzf --zsh 2>/dev/null)
+  export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --color=bg+:#313244,fg+:#cdd6f4,hl:#f38ba8,pointer:#f5c2e7,prompt:#cba6f7'
+fi
+
+# zoxide: smarter cd  (use `z dir`, `zi` for interactive)
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
+
+# eza / bat replacements with icons
+if (( $+commands[eza] )); then
+  alias ls='eza --icons --group-directories-first'
+  alias ll='eza -lah --icons --git --group-directories-first'
+  alias la='eza -a --icons --group-directories-first'
+  alias lt='eza --tree --level=2 --icons'
+fi
+if (( $+commands[bat] )); then
+  alias cat='bat --paging=never --style=plain'
+  export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+elif (( $+commands[batcat] )); then
+  alias bat='batcat'; alias cat='batcat --paging=never --style=plain'
+fi
+alias ..='cd ..'; alias ...='cd ../..'; alias grep='grep --color=auto'
+
+# Powerlevel10k prompt
+[[ -f "$ZSH_KIT/config/p10k.zsh" ]] && source "$ZSH_KIT/config/p10k.zsh"
+
+# Per-machine extras (drive shortcuts etc.) — kept out of the portable config
+[[ -f "$ZSH_KIT/config/local.zsh" ]] && source "$ZSH_KIT/config/local.zsh"
+
+# Syntax highlighting must load LAST (after all widgets are defined)
+# (2>/dev/null hides a harmless "unhandled ZLE widget" warning for zsh-autocomplete widgets)
+source "$ZSH_CUSTOM/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" 2>/dev/null

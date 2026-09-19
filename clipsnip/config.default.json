@@ -1,0 +1,32 @@
+{
+  "clipboard": {
+    "max_items": 50,
+    "max_text_chars": 200000,
+    "keep_images": true,
+    "expire_hours": 48,
+    "popup_width": 420,
+    "ignore_apps": [
+      "keepassxc", "keepass", "bitwarden", "1password", "lastpass", "enpass",
+      "dashlane", "nordpass", "proton pass", "seahorse", "gnome-keyring"
+    ],
+    "ignore_patterns": [
+      "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+      "\\bAKIA[0-9A-Z]{16}\\b",
+      "\\bgh[pousr]_[A-Za-z0-9]{30,}\\b",
+      "\\bgithub_pat_[A-Za-z0-9_]{20,}\\b",
+      "\\bsk-[A-Za-z0-9_-]{20,}\\b",
+      "\\bxox[baprs]-[A-Za-z0-9-]{10,}\\b",
+      "\\beyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}",
+      "(?i)\\b(password|passwd|secret|api[_-]?key|access[_-]?token|auth[_-]?token)\\b\\s*[:=]\\s*\\S{6,}"
+    ]
+  },
+  "shortcuts": {
+    "clipboard_popup":  ["<Super>v"],
+    "snip_area_clip":   ["<Super><Shift>s", "<Shift>Print"],
+    "snip_full_clip":   ["Print"],
+    "snip_window_clip": ["<Alt>Print"],
+    "snip_area_file":   ["<Control><Shift>Print"],
+    "snip_full_file":   ["<Control>Print"],
+    "snip_window_file": ["<Control><Alt>Print"]
+  }
+}

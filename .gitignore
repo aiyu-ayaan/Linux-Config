@@ -1,0 +1,10 @@
+# Re-cloned by zsh/install.sh and zsh/desktop/install-desktop.sh
+zsh/oh-my-zsh/
+zsh/custom/plugins/*/
+zsh/custom/themes/*/
+zsh/desktop/src/
+
+# Caches / bytecode
+__pycache__/
+*.pyc
+*.zwc
