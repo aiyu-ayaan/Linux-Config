@@ -22,6 +22,13 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md), [`.
 | Clipboard / snipping | `Win+V`, `Win+Shift+S` | [`../clipsnip/`](../clipsnip/README.md) |
 | Terminal | Zsh + Powerlevel10k, palette set in the GNOME Terminal profile | [`../zsh/`](../zsh/README.md) |
 
+## Header bar / tab style (`gtk3.css`)
+`apply.sh` installs `gtk3.css` as `~/.config/gtk-3.0/gtk.css` (an existing file is saved as `gtk.css.bak`). It restyles GTK3
+header bars and tabs to match the Catppuccin Mocha terminal profile: flat dark bar with a thin divider, pill-shaped
+buttons that light up mauve on hover, round window buttons (close turns red), tabs with a mauve underline on the active one,
+rounded window corners. It applies to every GTK3 app with a header bar (GNOME Terminal, and others), not just the terminal.
+Tweak the `@define-color` values at the top. Undo: `rm ~/.config/gtk-3.0/gtk.css` (or restore the `.bak`) and reopen the app.
+
 ## Gestures (touchegg)
 `touchegg.conf` is copied to `~/.config/touchegg/` by `apply.sh`, which also restarts the client. Needs `sudo apt install touchegg` (X11 only).
 | Gesture | Action |

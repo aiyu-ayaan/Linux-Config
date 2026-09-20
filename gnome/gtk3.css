@@ -1,0 +1,81 @@
+/* Catppuccin Mocha polish for GTK3 header bars and tabs (GNOME Terminal, gedit, ...).
+   Installed to ~/.config/gtk-3.0/gtk.css by apply.sh. Colours match the terminal profile (#1E1E2E). */
+@define-color ctp_base   #1e1e2e;
+@define-color ctp_mantle #181825;
+@define-color ctp_crust  #11111b;
+@define-color ctp_surf0  #313244;
+@define-color ctp_surf1  #45475a;
+@define-color ctp_text   #cdd6f4;
+@define-color ctp_sub    #a6adc8;
+@define-color ctp_mauve  #cba6f7;
+@define-color ctp_red    #f38ba8;
+
+/* Header bar: flat, same tone as the terminal, soft accent line underneath */
+headerbar {
+  background: @ctp_mantle;
+  color: @ctp_text;
+  border: none;
+  border-bottom: 1px solid @ctp_surf0;
+  box-shadow: none;
+  padding: 2px 6px;
+  min-height: 40px;
+}
+headerbar .title { color: @ctp_text; font-weight: 600; letter-spacing: 0.4px; }
+headerbar .subtitle { color: @ctp_sub; }
+
+/* Buttons: pill-shaped, subtle fill, mauve on hover */
+headerbar button {
+  background: @ctp_surf0;
+  color: @ctp_text;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  box-shadow: none;
+  text-shadow: none;
+  padding: 2px 10px;
+  min-height: 26px;
+  transition: all 150ms ease;
+}
+headerbar button:hover { background: @ctp_surf1; border-color: @ctp_mauve; }
+headerbar button:active, headerbar button:checked { background: @ctp_mauve; color: @ctp_crust; }
+
+/* Window buttons: round, close turns red */
+headerbar button.titlebutton {
+  background: transparent;
+  padding: 2px;
+  min-width: 26px;
+  border-radius: 999px;
+}
+headerbar button.titlebutton:hover { background: @ctp_surf1; }
+headerbar button.titlebutton.close:hover { background: @ctp_red; color: @ctp_crust; }
+
+/* Tabs: flat, active tab gets a mauve underline */
+notebook > header.top {
+  background: @ctp_mantle;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+notebook > header.top > tabs > tab {
+  background: transparent;
+  color: @ctp_sub;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
+  padding: 5px 14px;
+  min-height: 24px;
+  transition: all 150ms ease;
+}
+notebook > header.top > tabs > tab:hover { background: @ctp_surf0; color: @ctp_text; }
+notebook > header.top > tabs > tab:checked {
+  background: @ctp_base;
+  color: @ctp_text;
+  border-bottom-color: @ctp_mauve;
+}
+notebook > header.top > tabs > tab button {
+  border-radius: 999px; min-height: 16px; min-width: 16px; padding: 0; background: transparent;
+}
+notebook > header.top > tabs > tab button:hover { background: @ctp_red; color: @ctp_crust; }
+
+/* Rounded window corners (needs a compositor, which GNOME has) */
+window.csd { border-radius: 12px; }
+window.csd decoration { border-radius: 12px; }

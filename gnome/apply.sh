@@ -63,6 +63,13 @@ add_key() { # id name command binding
 }
 add_key ws-add   'New workspace'         "$HOME/.local/bin/ws-add"   '<Super><Control>n'
 add_key ws-close 'Close last workspace'  "$HOME/.local/bin/ws-close" '<Super><Control>w'
+# Header bar / tab styling for GTK3 apps (GNOME Terminal)
+mkdir -p ~/.config/gtk-3.0
+if [ -e ~/.config/gtk-3.0/gtk.css ] && ! grep -q "Catppuccin Mocha polish" ~/.config/gtk-3.0/gtk.css; then
+  cp ~/.config/gtk-3.0/gtk.css ~/.config/gtk-3.0/gtk.css.bak
+fi
+install -m644 "$here/gtk3.css" ~/.config/gtk-3.0/gtk.css
+
 # Touchpad gestures (touchegg). Restart the user client so it reloads the config.
 if command -v touchegg >/dev/null; then
   mkdir -p ~/.config/touchegg
