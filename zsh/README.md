@@ -32,6 +32,9 @@ Locale: the config forces a UTF-8 locale (system default `en_IN` isn't UTF-8, wh
 ## Clipboard & screenshots
 Moved to its own kit: `~/ai/clipsnip/` (Win+V history, Win+Shift+S snipping) — see its README.
 
+## PATH
+`typeset -U path` in `config/zshrc` removes duplicate `PATH` entries (e.g. `~/.local/bin` was listed several times).
+
 ## Node / npm (nvm)
 `config/zshrc` adds the nvm default Node version to `PATH` and loads nvm lazily on the first `nvm` call. Without it,
 zsh has no `npm` because nvm was only loaded from `~/.bashrc`. Switch versions with `nvm use <v>` / `nvm alias default <v>`.

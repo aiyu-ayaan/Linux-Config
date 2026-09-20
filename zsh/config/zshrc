@@ -14,6 +14,8 @@ fi
 
 # Where this kit lives (set by ~/.zshrc; falls back to this file's location)
 : ${ZSH_KIT:=${${(%):-%N}:A:h:h}}
+# Keep PATH free of duplicates (login shell, ~/.profile and tool installers each add the same entries)
+typeset -U path PATH
 export PATH="$HOME/.local/bin:$PATH"
 # Tools whose installers only edit ~/.bashrc
 [[ -d "$HOME/.bun/bin" ]] && export BUN_INSTALL="$HOME/.bun" PATH="$HOME/.bun/bin:$PATH"
