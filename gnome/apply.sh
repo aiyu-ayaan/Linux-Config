@@ -38,9 +38,10 @@ gs org.gnome.desktop.wm.keybindings move-to-monitor-right "['<Super><Shift>Right
 gs org.gnome.mutter.keybindings toggle-tiled-left  "['<Super>Left']"
 gs org.gnome.mutter.keybindings toggle-tiled-right "['<Super>Right']"
 
-# Launcher / file manager keys. Alt+Space belongs to Ulauncher, so the window menu moves.
-gs org.gnome.desktop.wm.keybindings activate-window-menu "['<Shift><Alt>space']"
-gs org.gnome.shell.keybindings toggle-overview "['<Super>s']"   # was Alt+Space, which stole the key from Ulauncher
+# Overview on Super+S (the touchegg gestures send it) and Super alone; Alt+Space stays the window menu
+gs org.gnome.desktop.wm.keybindings activate-window-menu "['<Alt>space']"
+gs org.gnome.shell.keybindings toggle-overview "['<Super>s']"
+# File manager key
 gs org.gnome.settings-daemon.plugins.media-keys home "['<Super>e']"
 
 # Touchpad / power
@@ -73,7 +74,7 @@ install -m644 "$here/gtk3.css" ~/.config/gtk-3.0/gtk.css
 
 # GNOME Shell extensions (need internet once; the shell must be restarted to load them: Alt+F2, r, Enter on X11)
 #   3740 Compiz alike magic lamp effect: Mac-style genie minimise / restore
-#   3193 Blur my Shell: blur behind the top bar, overview, terminal and Ulauncher
+#   3193 Blur my Shell: blur behind the top bar, overview, terminal
 #   3843 Just Perfection: compact top bar, centred clock, fewer icons
 ext_dir=~/.local/share/gnome-shell/extensions
 install_ext() { # pk uuid
@@ -116,7 +117,7 @@ if command -v gnome-extensions >/dev/null; then
     b .panel static-blur true
     b .overview blur true;         b .overview sigma 30
     b .applications blur true;     b .applications enable-all false
-    b .applications whitelist "['Gnome-terminal', 'ulauncher', 'Ulauncher']"
+    b .applications whitelist "['Gnome-terminal']"
     b .applications sigma 25;      b .applications opacity 215
   fi
 fi

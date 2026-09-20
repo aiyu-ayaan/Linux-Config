@@ -2,7 +2,7 @@
 
 Everything customised on this machine's GNOME (X11, Linux Mint 22.3) that is not the Zsh kit, clipsnip or the Cinnamon
 makeover in `zsh/desktop/`. `bash apply.sh` reapplies the `gsettings` parts (no root, safe to re-run).
-Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md), [`../docs/launcher.md`](../docs/launcher.md).
+Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md).
 
 ## What is configured
 | Area | Setting | Where it lives |
@@ -15,7 +15,7 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md), [`.
 | Add / close workspace | `Super+Ctrl+N` / `Super+Ctrl+W` (max 10, min 1) | `bin/ws-add`, `bin/ws-close` → `~/.local/bin`, custom keybindings |
 | Tiling | Edge tiling on, `Super+Left/Right` tile | `mutter` |
 | Shell | Hot corner on, battery % shown, `Super+1..9` no longer launch dock apps | interface, `shell.keybindings` |
-| Launcher | Ulauncher on `Alt+Space` (window menu moved to `Shift+Alt+Space`, GNOME overview moved from `Alt+Space` to `Super+S`; `Super` alone still opens it) | `~/.config/ulauncher`, see docs/launcher.md |
+| Launcher | None. Ulauncher was tried and removed; `Super` (or `Super+S`) opens the GNOME overview / search, `Alt+Space` is the window menu | `wm.keybindings`, `shell.keybindings` |
 | Files | `Super+E` opens Files | `media-keys home` |
 | Touchpad | Tap to click (natural scroll already default-on) | `peripherals.touchpad` |
 | Power | Suspend after 100 min on AC, 20 min on battery | `plugins.power` |
@@ -34,8 +34,8 @@ Tweak the `@define-color` values at the top. Undo: `rm ~/.config/gtk-3.0/gtk.css
 - **Just Perfection** (#3843): top bar 30 px high, tighter button padding, clock centred, and the world clock, weather,
   events, accessibility, keyboard-layout and notification-dot items hidden. Keys are in `apply.sh`; open its
   preferences in Extension Manager for more (e.g. hide the Activities button).
-- **Blur my Shell** (#3193): blurred top bar and overview, and blurred backgrounds for GNOME Terminal and Ulauncher
-  (application whitelist `Gnome-terminal`, `ulauncher`). Blur strength is `sigma` (25 to 30), window opacity 215/255.
+- **Blur my Shell** (#3193): blurred top bar and overview, and blurred background for GNOME Terminal
+  (application whitelist `Gnome-terminal`). Blur strength is `sigma` (25 to 30), window opacity 215/255.
   Add more apps to the whitelist under the extension's "Applications" page, or `enable-all` to blur every window.
 - Undo: `gnome-extensions disable blur-my-shell@aunetx just-perfection-desktop@just-perfection`
   (disable one at a time if the command only takes one uuid).
@@ -89,7 +89,6 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
 | Entry | Purpose |
 |---|---|
 | `clipsnip.desktop` | clipboard history daemon (installed by clipsnip) |
-| `ulauncher.desktop` | `ulauncher --hide-window` |
 | `mount-shared.desktop` | mounts the shared NTFS drive (UUID `550E85595197DBEC`) with `udisksctl` at login. Machine-specific: change the UUID or delete on other machines |
 | `touchegg` (system service + `/etc/xdg/autostart` client) | gesture daemon; config in `touchegg.conf`, see Gestures below |
 

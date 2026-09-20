@@ -9,10 +9,9 @@ copy the folder to another machine and run its installer. No root needed unless 
 |---|---|
 | [`zsh/`](zsh/README.md) | Zsh kit: Oh My Zsh, Powerlevel10k, autosuggestions, autocomplete, fast-syntax-highlighting, fzf / eza / bat / zoxide, FiraCode Nerd Font. Also the WhiteSur dark theme, Win11 icons and a Windows-style taskbar (`zsh/desktop/`). |
 | [`clipsnip/`](clipsnip/README.md) | Windows-style clipboard history (**Win+V**) and snipping (**Win+Shift+S**) for X11. Shortcut backends for GNOME, Cinnamon and Xfce. |
-| [`catppuccin/`](catppuccin/README.md) | Catppuccin Mocha theme for btop, bat, Ulauncher and VS Code (fzf and the terminal are in the zsh kit). `catppuccin/apply.sh` installs it. |
+| [`catppuccin/`](catppuccin/README.md) | Catppuccin Mocha theme for btop, bat and VS Code (fzf and the terminal are in the zsh kit). `catppuccin/apply.sh` installs it. |
 | [`gnome/`](gnome/README.md) | GNOME kit: dark theme, Papirus icons, cursor, title buttons, compact blurred top bar, GTK3/GTK4 Catppuccin styling, workspaces (`ws-add` / `ws-close`), tiling, genie minimise animation, touchpad gestures (touchegg), power-profile switching and low-battery warnings, autostart entries. `gnome/apply.sh` reapplies it. |
 | [`docs/gnome-workspaces.md`](docs/gnome-workspaces.md) | GNOME workspace shortcuts and Fedora-style tweaks applied with `gsettings`, plus undo commands. |
-| [`docs/launcher.md`](docs/launcher.md) | Ulauncher setup (Alt+Space, Spotlight / PowerToys Run style), web shortcuts and undo steps. |
 
 ## Quick start
 
@@ -25,7 +24,7 @@ copy the folder to another machine and run its installer. No root needed unless 
     # Optional: desktop theme, icons and taskbar (Cinnamon)
     bash zsh/desktop/install-desktop.sh
 
-    # Catppuccin theme for btop, bat, Ulauncher, VS Code
+    # Catppuccin theme for btop, bat, VS Code
     bash catppuccin/apply.sh
 
     # GNOME settings: dark theme, workspaces, shortcuts
