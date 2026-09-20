@@ -22,13 +22,29 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md), [`.
 | Clipboard / snipping | `Win+V`, `Win+Shift+S` | [`../clipsnip/`](../clipsnip/README.md) |
 | Terminal | Zsh + Powerlevel10k, palette set in the GNOME Terminal profile | [`../zsh/`](../zsh/README.md) |
 
+## Gestures (touchegg)
+`touchegg.conf` is copied to `~/.config/touchegg/` by `apply.sh`, which also restarts the client. Needs `sudo apt install touchegg` (X11 only).
+| Gesture | Action |
+|---|---|
+| 3-finger swipe left / right | Next / previous workspace |
+| 3-finger swipe up | Activities overview |
+| 3-finger swipe down | Show desktop |
+| 4-finger swipe left / right | Tile window left / right |
+| 4-finger swipe up / down | Maximise-restore / minimise window |
+| 2-finger tap / 3-finger tap | Right click / middle click |
+| 2-finger pinch in browsers | Zoom page |
+
+These differ from the package defaults (which use 3-finger swipes for maximise/tile and 4-finger for workspaces, and
+3-finger pinch to close a window; I dropped that one because it closes windows by accident). Edit the file and re-run
+`apply.sh` to change them. Undo: `rm ~/.config/touchegg/touchegg.conf && pkill -x touchegg; touchegg &`.
+
 ## Autostart (`~/.config/autostart`)
 | Entry | Purpose |
 |---|---|
 | `clipsnip.desktop` | clipboard history daemon (installed by clipsnip) |
 | `ulauncher.desktop` | `ulauncher --hide-window` |
 | `mount-shared.desktop` | mounts the shared NTFS drive (UUID `550E85595197DBEC`) with `udisksctl` at login. Machine-specific: change the UUID or delete on other machines |
-| `touchegg` (system service) | gesture daemon, running but `~/.config/touchegg/` is empty, so it uses the package defaults |
+| `touchegg` (system service + `/etc/xdg/autostart` client) | gesture daemon; config in `touchegg.conf`, see Gestures below |
 
 ## Not scripted (machine-specific)
 - Wallpaper / lock screen image: `~/.local/share/backgrounds/`, set via `org.gnome.desktop.background picture-uri(-dark)`.

@@ -9,7 +9,7 @@ copy the folder to another machine and run its installer. No root needed unless 
 |---|---|
 | [`zsh/`](zsh/README.md) | Zsh kit: Oh My Zsh, Powerlevel10k, autosuggestions, autocomplete, fast-syntax-highlighting, fzf / eza / bat / zoxide, FiraCode Nerd Font. Also the WhiteSur dark theme, Win11 icons and a Windows-style taskbar (`zsh/desktop/`). |
 | [`clipsnip/`](clipsnip/README.md) | Windows-style clipboard history (**Win+V**) and snipping (**Win+Shift+S**) for X11. Shortcut backends for GNOME, Cinnamon and Xfce. |
-| [`gnome/`](gnome/README.md) | GNOME kit: dark theme, cursor, title buttons, workspaces (`ws-add` / `ws-close`), tiling, touchpad, power, autostart entries. `gnome/apply.sh` reapplies it. |
+| [`gnome/`](gnome/README.md) | GNOME kit: dark theme, cursor, title buttons, workspaces (`ws-add` / `ws-close`), tiling, touchpad gestures (touchegg), power, autostart entries. `gnome/apply.sh` reapplies it. |
 | [`docs/gnome-workspaces.md`](docs/gnome-workspaces.md) | GNOME workspace shortcuts and Fedora-style tweaks applied with `gsettings`, plus undo commands. |
 | [`docs/launcher.md`](docs/launcher.md) | Ulauncher setup (Alt+Space, Spotlight / PowerToys Run style), web shortcuts and undo steps. |
 

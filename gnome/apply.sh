@@ -63,4 +63,13 @@ add_key() { # id name command binding
 }
 add_key ws-add   'New workspace'         "$HOME/.local/bin/ws-add"   '<Super><Control>n'
 add_key ws-close 'Close last workspace'  "$HOME/.local/bin/ws-close" '<Super><Control>w'
+# Touchpad gestures (touchegg). Restart the user client so it reloads the config.
+if command -v touchegg >/dev/null; then
+  mkdir -p ~/.config/touchegg
+  if ! cmp -s "$here/touchegg.conf" ~/.config/touchegg/touchegg.conf; then
+    install -m644 "$here/touchegg.conf" ~/.config/touchegg/touchegg.conf
+    pkill -x -u "$USER" touchegg 2>/dev/null || true   # the --daemon runs as root and is left alone
+    (setsid touchegg >/dev/null 2>&1 &)
+  fi
+fi
 echo "GNOME settings applied."
