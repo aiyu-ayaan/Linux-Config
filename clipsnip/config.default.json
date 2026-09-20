@@ -3,8 +3,10 @@
     "max_items": 50,
     "max_text_chars": 200000,
     "keep_images": true,
-    "expire_hours": 48,
+    "expire_hours": 1,
     "popup_width": 420,
+    "popup_position": "bottom-right",
+    "popup_margin": 16,
     "ignore_apps": [
       "keepassxc", "keepass", "bitwarden", "1password", "lastpass", "enpass",
       "dashlane", "nordpass", "proton pass", "seahorse", "gnome-keyring"

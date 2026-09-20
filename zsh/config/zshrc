@@ -81,6 +81,10 @@ alias ..='cd ..'; alias ...='cd ../..'; alias grep='grep --color=auto'
 # Powerlevel10k prompt
 [[ -f "$ZSH_KIT/config/p10k.zsh" ]] && source "$ZSH_KIT/config/p10k.zsh"
 
+# Terminal resize/maximise: the emulator reflows the old multi-line prompt and leaves ghost copies.
+# Clear and redraw the prompt on window-size change (only while editing a command line).
+TRAPWINCH() { [[ -o zle ]] && zle && zle clear-screen 2>/dev/null; }
+
 # Per-machine extras (drive shortcuts etc.) — kept out of the portable config
 [[ -f "$ZSH_KIT/config/local.zsh" ]] && source "$ZSH_KIT/config/local.zsh"
 

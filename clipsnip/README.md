@@ -53,7 +53,8 @@ Pause from a shortcut/terminal: `python3 clipboard-history.py --toggle-pause`.
 - **Not recorded:** copies from password managers (KeePassXC hint, or `ignore_apps` matching the focused
   window), and text matching `ignore_patterns` (private keys, AWS/GitHub/OpenAI/Slack keys, JWTs,
   `password=`/`api_key=` lines). Skipped items still work on the normal clipboard, they just aren't kept.
-- Unpinned items auto-delete after `expire_hours` (default 48; `0` = never). Also `max_items`, `keep_images`.
+- Unpinned items auto-delete after `expire_hours` (default 1 hour; `0` = never). Also `max_items`, `keep_images`.
+- Popup placement: `popup_position` (`bottom-right` by default) and `popup_margin` (px from the screen edge), `popup_width`.
 - Restart to apply config changes: `bash install.sh`.
 
 ## Files

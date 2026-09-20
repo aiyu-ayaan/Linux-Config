@@ -10,7 +10,10 @@ Popup keys: type to search · ↑/↓ move · Enter paste · Alt+1-9 quick paste
 Config: ~/.config/clipsnip/config.json ("clipboard" section). Data: ~/.local/share/clipsnip (private, 0600).
 Needs python3-gi + GTK3. Auto-paste uses xdotool when present.
 """
-import gi, os, sys, re, json, hashlib, time, shutil, subprocess
+import os
+# GTK on a Wayland session cannot watch the clipboard from the background or position windows; XWayland can.
+os.environ["GDK_BACKEND"] = "x11"
+import gi, sys, re, json, hashlib, time, shutil, subprocess
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
@@ -27,8 +30,8 @@ TERMINALS = ("gnome-terminal", "xterm", "kitty", "alacritty", "tilix", "konsole"
              "terminator", "wezterm", "foot", "mate-terminal", "lxterminal", "st-256color")
 PASSWORD_HINTS = {"x-kde-passwordmanagerhint"}
 
-DEFAULTS = {"max_items": 50, "max_text_chars": 200000, "keep_images": True, "expire_hours": 48,
-            "popup_width": 420, "ignore_apps": [], "ignore_patterns": []}
+DEFAULTS = {"max_items": 50, "max_text_chars": 200000, "keep_images": True, "expire_hours": 1,
+            "popup_width": 420, "popup_position": "bottom-right", "popup_margin": 16, "ignore_apps": [], "ignore_patterns": []}
 
 
 def load_config():
@@ -122,14 +125,24 @@ class History:
                 self.items = json.load(f)
         except Exception:
             self.items = []
-        self.items = [i for i in self.items if i["type"] == "text" or os.path.exists(i.get("file", ""))]
+        # Only pinned items survive a restart; everything else is session-only.
+        self.items = [i for i in self.items if i.get("pinned")
+                      and (i["type"] == "text" or os.path.exists(i.get("file", "")))]
+        keep = {i.get("file") for i in self.items if i["type"] == "image"}
+        for f in os.listdir(IMG_DIR):
+            if os.path.join(IMG_DIR, f) not in keep:
+                try:
+                    os.remove(os.path.join(IMG_DIR, f))
+                except OSError:
+                    pass
+        self.save()
         self.expire()
 
     def save(self):
         tmp = DB + ".tmp"
         fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
         with os.fdopen(fd, "w") as f:
-            json.dump(self.items, f)
+            json.dump([i for i in self.items if i.get("pinned")], f)
         os.replace(tmp, DB)
 
     def _drop_file(self, item):
@@ -167,10 +180,6 @@ class History:
         self.expire()
         self.save()
 
-    def toggle_pin(self, item):
-        item["pinned"] = not item.get("pinned", False)
-        self.save()
-
     def remove(self, item):
         if item in self.items:
             self.items.remove(item)
@@ -182,6 +191,10 @@ class History:
         for i in list(self.items):
             if not i.get("pinned"):
                 self.items.remove(i); self._drop_file(i)
+        self.save()
+
+    def toggle_pin(self, item):
+        item["pinned"] = not item.get("pinned", False)
         self.save()
 
 
@@ -202,7 +215,7 @@ class App(Gtk.Application):
         prov.load_from_data(CSS)
         Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(), prov,
                                                  Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-        GLib.timeout_add_seconds(600, lambda: (self.hist.expire(), True)[1])
+        GLib.timeout_add_seconds(60, lambda: (self.hist.expire(), True)[1])
         GLib.idle_add(self.capture)
 
     def do_command_line(self, cmd):
@@ -313,7 +326,7 @@ class App(Gtk.Application):
         for c in ("flat", "danger"):
             clear.get_style_context().add_class(c)
         clear.set_tooltip_text("Clear everything except pinned items")
-        clear.connect("clicked", lambda *_: (self.hist.clear(), self.close_popup()))
+        clear.connect("clicked", lambda *_: self.clear_all())
         head.pack_end(clear, False, False, 0)
         pause = Gtk.Button(label="▶ Resume" if self.paused else "⏸ Pause")
         pause.get_style_context().add_class("flat")
@@ -380,19 +393,31 @@ class App(Gtk.Application):
             self.lb.invalidate_filter()
             self.select_first()
 
+    def clear_all(self):
+        self.hist.clear()
+        self.close_popup()
+        try:
+            self.clip.clear()
+        except Exception:
+            pass
+
     def focus_lost(self):
         if self.popup is not None and self.had_focus and not self.popup.is_active():
             self.close_popup()
         return False
 
     def place(self, win):
+        """Fixed spot on the primary monitor (like Windows), independent of the mouse."""
         disp = Gdk.Display.get_default()
-        _, x, y = disp.get_default_seat().get_pointer().get_position()
-        mon = disp.get_monitor_at_point(x, y).get_workarea()
+        mon = (disp.get_primary_monitor() or disp.get_monitor(0)).get_workarea()
         w, h = win.get_size()
-        x = max(mon.x + 8, min(x - w // 2, mon.x + mon.width - w - 8))
-        y = max(mon.y + 8, min(y + 12, mon.y + mon.height - h - 8))
-        win.move(x, y)
+        m = int(self.cfg["popup_margin"])
+        pos = self.cfg["popup_position"]
+        x = mon.x + (mon.width - w) // 2 if "center" in pos else (
+            mon.x + m if "left" in pos else mon.x + mon.width - w - m)
+        y = mon.y + m if pos.startswith("top") else (
+            mon.y + (mon.height - h) // 2 if pos == "center" else mon.y + mon.height - h - m)
+        win.move(max(mon.x, x), max(mon.y, y))
 
     # --- rows / search ---------------------------------------------------
     def make_row(self, n, it):

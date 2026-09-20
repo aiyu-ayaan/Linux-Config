@@ -1,0 +1,7 @@
+#!/bin/sh
+# Add a workspace (max 10) and jump to it
+n=$(gsettings get org.gnome.desktop.wm.preferences num-workspaces)
+[ "$n" -ge 10 ] && exit 0
+gsettings set org.gnome.desktop.wm.preferences num-workspaces $((n+1))
+sleep 0.2
+xdotool set_desktop $n

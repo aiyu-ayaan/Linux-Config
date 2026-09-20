@@ -32,6 +32,10 @@ Locale: the config forces a UTF-8 locale (system default `en_IN` isn't UTF-8, wh
 ## Clipboard & screenshots
 Moved to its own kit: `~/ai/clipsnip/` (Win+V history, Win+Shift+S snipping) — see its README.
 
+## Terminal resize
+`config/zshrc` defines `TRAPWINCH` to clear and redraw the prompt when the terminal is resized or maximised, because
+the multi-line Powerlevel10k prompt otherwise leaves ghost copies. Remove that function if you don't want it.
+
 ## Prompt colours
 `config/p10k.zsh` ends with a "Programmer palette (Catppuccin Mocha)" override block: pastel segments with dark
 text, dark segments for Node/Python/Go/Rust/Java versions (shown only inside such projects), exec time, clock.

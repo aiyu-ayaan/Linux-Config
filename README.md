@@ -9,6 +9,7 @@ copy the folder to another machine and run its installer. No root needed unless 
 |---|---|
 | [`zsh/`](zsh/README.md) | Zsh kit: Oh My Zsh, Powerlevel10k, autosuggestions, autocomplete, fast-syntax-highlighting, fzf / eza / bat / zoxide, FiraCode Nerd Font. Also the WhiteSur dark theme, Win11 icons and a Windows-style taskbar (`zsh/desktop/`). |
 | [`clipsnip/`](clipsnip/README.md) | Windows-style clipboard history (**Win+V**) and snipping (**Win+Shift+S**) for X11. Shortcut backends for GNOME, Cinnamon and Xfce. |
+| [`gnome/`](gnome/README.md) | GNOME kit: dark theme, cursor, title buttons, workspaces (`ws-add` / `ws-close`), tiling, touchpad, power, autostart entries. `gnome/apply.sh` reapplies it. |
 | [`docs/gnome-workspaces.md`](docs/gnome-workspaces.md) | GNOME workspace shortcuts and Fedora-style tweaks applied with `gsettings`, plus undo commands. |
 | [`docs/launcher.md`](docs/launcher.md) | Ulauncher setup (Alt+Space, Spotlight / PowerToys Run style), web shortcuts and undo steps. |
 
@@ -23,6 +24,9 @@ copy the folder to another machine and run its installer. No root needed unless 
     # Optional: desktop theme, icons and taskbar (Cinnamon)
     bash zsh/desktop/install-desktop.sh
 
+    # GNOME settings: dark theme, workspaces, shortcuts
+    bash gnome/apply.sh
+
 Installers are safe to re-run. See each kit's README for options such as `--uninstall`, `--purge` and `--shortcuts`
 (clipsnip), and for restoring the previous look (`zsh/desktop/restore-old-look.sh`).
 
@@ -31,3 +35,4 @@ Installers are safe to re-run. See each kit's README for options such as `--unin
 - `zsh/oh-my-zsh/`, `zsh/custom/` and `zsh/desktop/src/` hold third-party projects (Oh My Zsh, plugins,
   Powerlevel10k, WhiteSur) that the installers download or use. They keep their own licenses.
 - `zsh/config/local.zsh` is machine-specific (shared drive UUID); edit it on other machines.
+- The `mount-shared` autostart entry and the wallpaper are machine-specific too (see `gnome/README.md`).

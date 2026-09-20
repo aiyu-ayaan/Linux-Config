@@ -1,0 +1,5 @@
+#!/bin/sh
+# Remove the LAST workspace (min 1); its windows move to the previous one
+n=$(gsettings get org.gnome.desktop.wm.preferences num-workspaces)
+[ "$n" -le 1 ] && exit 0
+gsettings set org.gnome.desktop.wm.preferences num-workspaces $((n-1))
