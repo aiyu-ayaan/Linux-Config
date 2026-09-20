@@ -39,3 +39,23 @@ Scripts: `~/.local/bin/ws-add`, `~/.local/bin/ws-close` (they change `num-worksp
 ## Files / theme
 - Super+E opens the file manager (GNOME Files); `media-keys home`.
 - Dark mode: `color-scheme prefer-dark` + `gtk-theme Adwaita-dark` (GTK3 apps such as Nemo ignore color-scheme and need the dark GTK theme).
+
+## Full workspace isolation
+Goal: each workspace behaves like its own desktop. Chrome running on workspace 1 must not pull you back
+to workspace 1 when you open it from workspace 3.
+
+| Layer | How |
+|---|---|
+| Alt+Tab | `org.gnome.shell.app-switcher current-workspace-only true` lists only windows of the current workspace |
+| Dash click / Enter | Extension `workspace-isolation@aiyu.local` (`gnome/extensions/`): if the app runs, but has no window on the current workspace, it opens a **new window here** (`app.open_new_window`) instead of activating the one on another workspace. If it has a window here, it is focused as usual |
+| Running dots | The dot under a dash icon shows only when the app has a window on the current workspace |
+| Windows | Sticky ("always on all workspaces") windows count as present everywhere |
+
+Notes
+- Apps without a "new window" action (`can_open_new_window()` false, e.g. single-instance apps) fall back to the stock behaviour and jump to their workspace.
+- Whether the new window is a real separate window depends on the app: Chrome, Terminal, Files and VS Code open one.
+- Install: `gnome/apply.sh` copies the extension to `~/.local/share/gnome-shell/extensions/` and enables it. On X11 restart the shell once
+  (`Alt+F2`, `r`, Enter) or log out and in so the new extension is detected.
+- Undo: `gnome-extensions disable workspace-isolation@aiyu.local` and
+  `gsettings reset org.gnome.shell.app-switcher current-workspace-only`.
+- Debug: `journalctl -f -o cat /usr/bin/gnome-shell` or Looking Glass (`Alt+F2`, `lg`).

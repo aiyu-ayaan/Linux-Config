@@ -19,6 +19,8 @@ into `~/.local` if missing, sets autostart, and applies the shortcuts.
 | PrtSc / Alt+PrtSc | full screen / window → clipboard |
 | Ctrl+PrtSc / Ctrl+Shift+PrtSc / Ctrl+Alt+PrtSc | full / area / window → file (`~/Pictures`) |
 
+Snips are silent: `snip.sh` sets `CANBERRA_DRIVER=null` so gnome-screenshot does not play its shutter sound. Remove that line in `snip.sh` to get the sound back.
+
 ## Folder layout
     clipsnip/
       install.sh              installer / uninstaller

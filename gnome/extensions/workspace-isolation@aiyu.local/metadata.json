@@ -1,0 +1,6 @@
+{
+  "uuid": "workspace-isolation@aiyu.local",
+  "name": "Workspace Isolation",
+  "description": "Per-workspace apps: clicking an app in the dash opens a new window on the current workspace instead of jumping to the workspace where the app already runs. Running dots reflect the current workspace only.",
+  "shell-version": ["46"]
+}

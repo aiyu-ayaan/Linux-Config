@@ -21,6 +21,8 @@ gs org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,maximize,clo
 # Workspaces: fixed count (ws-add / ws-close change it), only on primary monitor
 gs org.gnome.mutter dynamic-workspaces false
 gs org.gnome.mutter workspaces-only-on-primary true
+# Isolation: Alt+Tab only lists windows of the current workspace (dash isolation is the workspace-isolation extension below)
+gs org.gnome.shell.app-switcher current-workspace-only true
 gs org.gnome.mutter edge-tiling true
 for i in 1 2 3 4; do
   gs org.gnome.desktop.wm.keybindings switch-to-workspace-$i "['<Super>$i']"
@@ -99,7 +101,10 @@ if command -v gnome-extensions >/dev/null; then
   gs org.gnome.shell disable-user-extensions false
   lamp=compiz-alike-magic-lamp-effect@hermes83.github.com; blur=blur-my-shell@aunetx; jp=just-perfection-desktop@just-perfection
   install_ext 3740 $lamp; install_ext 3193 $blur; install_ext 3843 $jp
-  for e in $lamp $blur $jp; do [ -d "$ext_dir/$e" ] && enable_ext $e; done
+  # Local extension (in this repo): dash click opens a new window on the current workspace
+  iso=workspace-isolation@aiyu.local
+  mkdir -p "$ext_dir" && rm -rf "${ext_dir:?}/$iso" && cp -r "$here/extensions/$iso" "$ext_dir/"
+  for e in $lamp $blur $jp $iso; do [ -d "$ext_dir/$e" ] && enable_ext $e; done
 
   if [ -d "$ext_dir/$jp" ]; then
     j() { ext_set $jp org.gnome.shell.extensions.just-perfection "$@"; }

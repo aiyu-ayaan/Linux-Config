@@ -9,6 +9,7 @@ mode="${1:-area}"; save=0; [[ "${2:-}" == "--save" ]] && save=1
 dir="${CLIPSNIP_SHOT_DIR:-$HOME/Pictures/Screenshots}"
 tmp="$(mktemp --suffix=.png)"; trap 'rm -f "$tmp"' EXIT
 export PATH="$HOME/.local/bin:$PATH"
+export CANBERRA_DRIVER=null   # libcanberra null driver: no shutter sound from gnome-screenshot
 have() { command -v "$1" >/dev/null 2>&1; }
 
 if have gnome-screenshot; then
