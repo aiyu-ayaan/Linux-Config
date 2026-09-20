@@ -17,6 +17,13 @@ fi
 export PATH="$HOME/.local/bin:$PATH"
 # Tools whose installers only edit ~/.bashrc
 [[ -d "$HOME/.bun/bin" ]] && export BUN_INSTALL="$HOME/.bun" PATH="$HOME/.bun/bin:$PATH"
+# Node via nvm: put the default version on PATH (fast) and load nvm itself lazily on first `nvm` call.
+export NVM_DIR="$HOME/.nvm"
+if [[ -s "$NVM_DIR/alias/default" ]]; then
+  _nvm_bin=("$NVM_DIR"/versions/node/v${$(<"$NVM_DIR/alias/default")#v}*/bin(N[-1]))
+  [[ -n $_nvm_bin ]] && PATH="$_nvm_bin:$PATH"; unset _nvm_bin
+fi
+nvm() { unset -f nvm; [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"; nvm "$@"; }
 
 # Oh My Zsh
 export ZSH="$ZSH_KIT/oh-my-zsh"

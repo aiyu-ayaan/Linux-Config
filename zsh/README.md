@@ -32,6 +32,10 @@ Locale: the config forces a UTF-8 locale (system default `en_IN` isn't UTF-8, wh
 ## Clipboard & screenshots
 Moved to its own kit: `~/ai/clipsnip/` (Win+V history, Win+Shift+S snipping) — see its README.
 
+## Node / npm (nvm)
+`config/zshrc` adds the nvm default Node version to `PATH` and loads nvm lazily on the first `nvm` call. Without it,
+zsh has no `npm` because nvm was only loaded from `~/.bashrc`. Switch versions with `nvm use <v>` / `nvm alias default <v>`.
+
 ## Terminal resize
 `config/zshrc` defines `TRAPWINCH` to clear and redraw the prompt when the terminal is resized or maximised, because
 the multi-line Powerlevel10k prompt otherwise leaves ghost copies. Remove that function if you don't want it.
