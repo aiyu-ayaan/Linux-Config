@@ -1,0 +1,54 @@
+#!/bin/sh
+# Toggle show-desktop, Windows Win+D style, with a real minimise per window so
+# the genie (magic lamp) animation plays.
+#   1st Super+D: minimise every window on the CURRENT workspace only, remember them.
+#   2nd Super+D: restore them with focus (other workspaces are never touched).
+# State is kept per workspace, so switching workspaces between presses just works.
+# Needs: xdotool + xprop (same X11 tools as ws-add / ws-close's xdotool).
+#
+# Note: xdotool's --onlyvisible cannot spot minimised windows on Mutter (it keeps
+# them mapped), so minimised state is read from _NET_WM_STATE (..._HIDDEN) instead.
+set -u
+is_hidden() { # $1 = window id; true when minimised / hidden
+  xprop -id "$1" _NET_WM_STATE 2>/dev/null | grep -q '_NET_WM_STATE_HIDDEN'
+}
+is_normal() { # $1 = window id; true for plain app windows (skips dock/desktop)
+  case $(xprop -id "$1" _NET_WM_WINDOW_TYPE 2>/dev/null) in
+    *_NET_WM_WINDOW_TYPE_NORMAL*) return 0;;
+    *) return 1;;
+  esac
+}
+desk=$(xdotool get_desktop)
+dir="${XDG_RUNTIME_DIR:-/tmp}/toggle-desktop-$(id -un)"
+mkdir -p "$dir"
+state="$dir/ws-$desk.ids"
+cands=$(xdotool search --desktop "$desk" "" 2>/dev/null) || cands=""
+visible=""
+# shellcheck disable=SC2086
+for w in $cands; do
+  is_normal "$w" || continue
+  is_hidden "$w" && continue
+  visible="$visible $w"
+done
+visible=$(printf '%s\n' "$visible" | tr ' ' '\n' | grep -v '^$')
+if [ -n "$visible" ]; then
+  # Minimise pass. Merge with any previous list (e.g. a window opened while
+  # minimised) so nothing we hid is ever lost.
+  old=""; [ -f "$state" ] && old=$(cat "$state" 2>/dev/null)
+  list=""
+  # shellcheck disable=SC2086
+  for w in $old $visible; do
+    case " $list " in *" $w "*) continue;; esac
+    xdotool getwindowname "$w" >/dev/null 2>&1 || continue  # closed since
+    list="$list $w"
+  done
+  printf '%s\n' "$list" | tr ' ' '\n' | grep -v '^$' > "$state"
+  for w in $visible; do xdotool windowminimize "$w" 2>/dev/null; done
+elif [ -s "$state" ]; then
+  # Restore pass: nothing visible here, so bring back what we minimised.
+  ids=$(cat "$state"); rm -f "$state"
+  for w in $ids; do
+    xdotool getwindowname "$w" >/dev/null 2>&1 || continue  # closed since
+    xdotool windowactivate "$w" 2>/dev/null  # unminimise + focus (genie restore)
+  done
+fi

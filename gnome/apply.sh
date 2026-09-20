@@ -5,9 +5,9 @@ set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 gs() { gsettings set "$@" || echo "skipped: $*"; }
 
-# Helper scripts (Super+Ctrl+N / Super+Ctrl+W)
+# Helper scripts (Super+Ctrl+N / Super+Ctrl+W / Super+D)
 mkdir -p ~/.local/bin
-install -m755 "$here"/bin/ws-add "$here"/bin/ws-close ~/.local/bin/
+install -m755 "$here"/bin/ws-add "$here"/bin/ws-close "$here"/bin/toggle-desktop ~/.local/bin/
 
 # Look
 gs org.gnome.desktop.interface color-scheme prefer-dark
@@ -43,9 +43,11 @@ gs org.gnome.mutter.keybindings toggle-tiled-right "['<Super>Right']"
 # Overview: Alt+Space behaves like pressing Super (Super+S is what the touchegg gestures send). The window menu moves.
 gs org.gnome.desktop.wm.keybindings activate-window-menu "['<Shift><Alt>space']"
 gs org.gnome.shell.keybindings toggle-overview "['<Super>s','<Alt>space']"
-# Show desktop (Windows Win+D): hide all windows on the current workspace only;
-# press again to restore them with focus (per-workspace showing_desktop in mutter).
-gs org.gnome.desktop.wm.keybindings show-desktop "['<Super>d']"
+# Show desktop, Windows Win+D style: bin/toggle-desktop minimises every window on the
+# current workspace only (press again to restore with focus). A real minimise is used
+# — not GNOME's native show-desktop — so the genie (magic lamp) animation plays per
+# window. Native show-desktop hides windows without minimising and would skip it.
+gs org.gnome.desktop.wm.keybindings show-desktop '[]'
 # File manager key
 gs org.gnome.settings-daemon.plugins.media-keys home "['<Super>e']"
 
@@ -99,6 +101,8 @@ add_key() { # id name command binding
 }
 add_key ws-add   'New workspace'         "$HOME/.local/bin/ws-add"   '<Super><Control>n'
 add_key ws-close 'Close last workspace'  "$HOME/.local/bin/ws-close" '<Super><Control>w'
+# Win+D show-desktop toggle (real minimise per window, so the genie animation plays)
+add_key toggle-desktop 'Show desktop (minimise)' "$HOME/.local/bin/toggle-desktop" '<Super>d'
 # Rofi app launcher (Catppuccin theme in catppuccin/rofi/): Super+Space. Install: sudo apt install rofi
 if command -v rofi >/dev/null; then
   add_key rofi-drun 'App launcher (rofi)' 'rofi -show drun' '<Super>space'

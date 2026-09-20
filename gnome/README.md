@@ -16,7 +16,7 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md).
 | Add / close workspace | `Super+Ctrl+N` / `Super+Ctrl+W` (max 10, min 1) | `bin/ws-add`, `bin/ws-close` → `~/.local/bin`, custom keybindings |
 | Tiling | Edge tiling on, `Super+Left/Right` tile | `mutter` |
 | Shell | Hot corner on, battery % shown, `Super+1..9` no longer launch dock apps | interface, `shell.keybindings` |
-| Show desktop | `Super+D` hides all windows on the current workspace only; press again to restore them with focus (Windows Win+D) | `wm.keybindings show-desktop` |
+| Show desktop | `Super+D` minimises all windows on the current workspace only (genie animation per window); press again to restore them with focus — Windows Win+D | `bin/toggle-desktop` → `~/.local/bin`, custom keybinding (native `show-desktop` left unbound: it hides without minimising and skips the animation) |
 | Overview / search | `Alt+Space`, `Super+S` and `Super` alone open the GNOME overview. `Super+Space` opens rofi drun (if rofi installed). Window menu is on `Shift+Alt+Space`. Ulauncher was tried and removed | `wm.keybindings`, `shell.keybindings` |
 | Files | `Super+E` opens Files; Nautilus uses location entry, always thumbnails/counts, Mocha sidebar (`gtk4.css`) | `media-keys home`, `org.gnome.nautilus.preferences` |
 | Qt apps | `adwaita-dark` + qt5ct Mocha palette (`catppuccin/qt/qt5ct.conf`), needs `sudo apt install qt5ct adwaita-qt` | `~/.config/environment.d/10-qt-mocha.conf` |
@@ -78,6 +78,8 @@ internet once). Minimising a window now sucks it into the dock/taskbar like the 
 **Restart the shell once to load it: `Alt+F2`, type `r`, Enter** (X11 keeps your windows open).
 Speed and style: open the extension's settings (Extension Manager > Compiz alike magic lamp effect > gear, or
 `gnome-extensions prefs compiz-alike-magic-lamp-effect@hermes83.github.com`). Default duration is 400 ms.
+`Super+D` (show desktop, `bin/toggle-desktop`) minimises window-by-window precisely so this genie animation plays;
+GNOME's native show-desktop is left unbound because it hides windows without minimising and would skip the effect.
 Open / close / maximise keep GNOME's built-in zoom-and-fade animations (`enable-animations true`), which already resemble macOS.
 Undo: `gnome-extensions disable compiz-alike-magic-lamp-effect@hermes83.github.com`.
 
@@ -121,4 +123,5 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
     gsettings reset org.gnome.desktop.interface color-scheme
     dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ws-add/
     dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ws-close/
-    rm ~/.local/bin/ws-add ~/.local/bin/ws-close
+    dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/toggle-desktop/
+    rm ~/.local/bin/ws-add ~/.local/bin/ws-close ~/.local/bin/toggle-desktop

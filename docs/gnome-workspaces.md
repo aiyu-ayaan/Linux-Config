@@ -11,7 +11,7 @@ Applied with `gsettings` on 2026-09-20 (GNOME on X11, Linux Mint 22.3).
 | Super+Shift+1 … 4 | Move window to workspace 1–4 |
 | Ctrl+Alt+Shift+Left / Right, Super+Shift+PageUp / PageDown | Move window to prev / next workspace |
 | Super+Left / Right | Tile window left / right (window management) |
-| Super+D | Show desktop: hide all windows on the current workspace only; press again to restore them with focus (Windows Win+D) |
+| Super+D | Show desktop: minimise all windows on the current workspace only (genie animation per window); press again to restore them with focus (Windows Win+D) |
 | Super (alone) | Activities overview |
 
 Workspaces are fixed at 4 (dynamic workspaces off).
@@ -37,6 +37,16 @@ Super+1..9 no longer launch dock apps (`switch-to-application-N` cleared).
 
 Scripts: `~/.local/bin/ws-add`, `~/.local/bin/ws-close` (they change `num-workspaces`).
 `Super+1..4` only cover the first four; use `Ctrl+Alt+←/→` for the rest.
+
+## Show desktop (Win+D)
+`Super+D` runs `~/.local/bin/toggle-desktop` (`gnome/bin/toggle-desktop`): it really minimises
+every window on the current workspace (so the genie minimise animation plays per window) and
+remembers them in a per-workspace state file; pressing it again restores them with focus.
+Windows on other workspaces, and windows already minimised before, are never touched.
+GNOME's native `show-desktop` is left unbound on purpose — it hides windows without minimising,
+so the animation would not play. Undo: `dconf reset -f
+/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/toggle-desktop/` and
+`rm ~/.local/bin/toggle-desktop`.
 
 ## Files / theme
 - Super+E opens the file manager (GNOME Files); `media-keys home`.
