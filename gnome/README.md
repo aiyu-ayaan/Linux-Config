@@ -7,7 +7,7 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md), [`.
 ## What is configured
 | Area | Setting | Where it lives |
 |---|---|---|
-| Theme | Dark mode (`color-scheme prefer-dark`, `Adwaita-dark` for GTK3 apps), Adwaita icons | `org.gnome.desktop.interface` |
+| Theme | Dark mode (`color-scheme prefer-dark`, `Adwaita-dark` for GTK3 apps), Papirus-Dark icons (system package) | `org.gnome.desktop.interface` |
 | Cursor | Bibata-Modern-Classic, size 24 | `org.gnome.desktop.interface` (theme in `~/.icons`) |
 | Fonts | UI `Ubuntu 10`, title bars `Ubuntu Medium 10`; FiraCode Nerd Font + JetBrains Mono in `~/.fonts` | interface / wm prefs; fonts installed by the zsh kit |
 | Title bars | Minimise / maximise / close on the right | `wm.preferences button-layout` |
@@ -29,6 +29,36 @@ buttons that light up mauve on hover, round window buttons (close turns red), ta
 rounded window corners. It applies to every GTK3 app with a header bar (GNOME Terminal, and others), not just the terminal.
 Tweak the `@define-color` values at the top. Undo: `rm ~/.config/gtk-3.0/gtk.css` (or restore the `.bak`) and reopen the app.
 
+## Top bar and blur (Just Perfection + Blur my Shell)
+`apply.sh` installs and configures two more extensions (both need the shell restart: `Alt+F2`, `r`, Enter).
+- **Just Perfection** (#3843): top bar 30 px high, tighter button padding, clock centred, and the world clock, weather,
+  events, accessibility, keyboard-layout and notification-dot items hidden. Keys are in `apply.sh`; open its
+  preferences in Extension Manager for more (e.g. hide the Activities button).
+- **Blur my Shell** (#3193): blurred top bar and overview, and blurred backgrounds for GNOME Terminal and Ulauncher
+  (application whitelist `Gnome-terminal`, `ulauncher`). Blur strength is `sigma` (25 to 30), window opacity 215/255.
+  Add more apps to the whitelist under the extension's "Applications" page, or `enable-all` to blur every window.
+- Undo: `gnome-extensions disable blur-my-shell@aunetx just-perfection-desktop@just-perfection`
+  (disable one at a time if the command only takes one uuid).
+
+## GTK4 / libadwaita apps (`gtk4.css`)
+Files, Settings and other libadwaita apps read `~/.config/gtk-4.0/gtk.css` and `gtk-dark.css`. Those were symlinks to the
+WhiteSur theme from the Cinnamon makeover; `apply.sh` renames them to `*.whitesur.bak` and installs `gtk4.css`, which
+overrides libadwaita's named colours with Catppuccin Mocha (mauve accent, `#1e1e2e` windows, `#181825` header bars and
+sidebars). Reopen an app to see it. Undo: `cd ~/.config/gtk-4.0 && for f in gtk gtk-dark; do rm $f.css; mv $f.css.whitesur.bak $f.css; done`.
+
+## Icons and cursor
+Icon theme is **Papirus-Dark** (installed system-wide already, `sudo apt install papirus-icon-theme` elsewhere), cursor is
+Bibata-Modern-Classic. Undo: `gsettings reset org.gnome.desktop.interface icon-theme`.
+
+## Battery and power (`bin/power-watch`)
+A small background script started at login (`~/.config/autostart/power-watch.desktop`, installed by `apply.sh`), only on
+machines with a battery.
+- Plug in: profile `performance` and a "Charger connected" notification. Unplug: profile `balanced` and "On battery".
+  Override with `POWER_AC_PROFILE` / `POWER_BAT_PROFILE` (`power-saver`, `balanced`, `performance`).
+- Notifications at 20% ("Battery low") and 10% (critical), once per discharge.
+- GNOME's own `power-saver-profile-on-low-battery` still switches to power-saver at its low threshold.
+- Stop it: `pkill -f power-watch` and `rm ~/.config/autostart/power-watch.desktop`.
+
 ## Window animations (Mac-style genie)
 `apply.sh` installs and enables the GNOME extension **Compiz alike magic lamp effect** (extensions.gnome.org #3740, needs
 internet once). Minimising a window now sucks it into the dock/taskbar like the macOS genie, and restoring pulls it back out.
@@ -47,6 +77,7 @@ Undo: `gnome-extensions disable compiz-alike-magic-lamp-effect@hermes83.github.c
 | 3-finger swipe down | Show desktop |
 | 4-finger swipe left / right | Tile window left / right |
 | 4-finger swipe up / down | Maximise-restore / minimise window |
+| 4-finger pinch in / out | Overview / app grid |
 | 2-finger tap / 3-finger tap | Right click / middle click |
 | 2-finger pinch in browsers | Zoom page |
 
@@ -64,7 +95,7 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
 
 ## Not scripted (machine-specific)
 - Wallpaper / lock screen image: `~/.local/share/backgrounds/`, set via `org.gnome.desktop.background picture-uri(-dark)`.
-- The only GNOME Shell extension enabled is the magic lamp effect; Extension Manager and Tweaks are installed.
+- GNOME Shell extensions enabled: magic lamp effect, Blur my Shell and Just Perfection; Extension Manager and Tweaks are installed.
 - Dock favourites: Files, Chrome, Terminal, VS Code.
 
 ## Undo

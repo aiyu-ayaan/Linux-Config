@@ -12,7 +12,7 @@ install -m755 "$here"/bin/ws-add "$here"/bin/ws-close ~/.local/bin/
 # Look
 gs org.gnome.desktop.interface color-scheme prefer-dark
 gs org.gnome.desktop.interface gtk-theme Adwaita-dark   # GTK3 apps (Nemo etc.) ignore color-scheme
-gs org.gnome.desktop.interface icon-theme Adwaita
+gs org.gnome.desktop.interface icon-theme Papirus-Dark   # falls back to Adwaita if not installed
 gs org.gnome.desktop.interface cursor-theme Bibata-Modern-Classic
 gs org.gnome.desktop.interface show-battery-percentage true
 gs org.gnome.desktop.interface enable-hot-corners true
@@ -70,24 +70,76 @@ if [ -e ~/.config/gtk-3.0/gtk.css ] && ! grep -q "Catppuccin Mocha polish" ~/.co
 fi
 install -m644 "$here/gtk3.css" ~/.config/gtk-3.0/gtk.css
 
-# Mac-style genie minimise / restore (GNOME extension "Compiz alike magic lamp effect", #3740, needs internet once)
-# The shell must be restarted to load it: Alt+F2, type r, Enter (X11 keeps your windows).
-lamp=compiz-alike-magic-lamp-effect@hermes83.github.com
-if command -v gnome-extensions >/dev/null; then
-  if [ ! -d ~/.local/share/gnome-shell/extensions/$lamp ]; then
-    tmp=$(mktemp -d); ver=$(gnome-shell --version | grep -o '[0-9]*' | head -1)
-    pk=$(curl -fsS "https://extensions.gnome.org/extension-info/?pk=3740&shell_version=$ver" | python3 -c 'import sys,json;print(json.load(sys.stdin)["download_url"])') &&
-    curl -fsSL "https://extensions.gnome.org$pk" -o "$tmp/lamp.zip" &&
-    gnome-extensions install --force "$tmp/lamp.zip" || echo "skipped: could not install magic lamp"
-    rm -rf "$tmp"
-  fi
-  gs org.gnome.shell disable-user-extensions false
-  cur=$(gsettings get org.gnome.shell enabled-extensions)
-  case $cur in *"$lamp"*) ;; *)
+# GNOME Shell extensions (need internet once; the shell must be restarted to load them: Alt+F2, r, Enter on X11)
+#   3740 Compiz alike magic lamp effect: Mac-style genie minimise / restore
+#   3193 Blur my Shell: blur behind the top bar, overview, terminal and Ulauncher
+#   3843 Just Perfection: compact top bar, centred clock, fewer icons
+ext_dir=~/.local/share/gnome-shell/extensions
+install_ext() { # pk uuid
+  [ -d "$ext_dir/$2" ] && return 0
+  local tmp ver url; tmp=$(mktemp -d); ver=$(gnome-shell --version | grep -o '[0-9]*' | head -1)
+  url=$(curl -fsS "https://extensions.gnome.org/extension-info/?pk=$1&shell_version=$ver" | python3 -c 'import sys,json;print(json.load(sys.stdin)["download_url"])') &&
+    curl -fsSL "https://extensions.gnome.org$url" -o "$tmp/e.zip" &&
+    gnome-extensions install --force "$tmp/e.zip" || echo "skipped: could not install $2"
+  rm -rf "$tmp"
+}
+enable_ext() {
+  local cur; cur=$(gsettings get org.gnome.shell enabled-extensions)
+  case $cur in *"$1"*) ;; *)
     cur=${cur/@as /}; cur=${cur%]}; [ "$cur" = "[" ] || cur="$cur, "
-    gsettings set org.gnome.shell enabled-extensions "$cur'$lamp']";;
+    gsettings set org.gnome.shell enabled-extensions "$cur'$1']";;
   esac
+}
+ext_set() { # uuid schema key value  (extension schemas are not on the default schema path)
+  GSETTINGS_SCHEMA_DIR="$ext_dir/$1/schemas" gsettings set "$2" "$3" "$4" 2>/dev/null || echo "skipped: $2 $3"
+}
+if command -v gnome-extensions >/dev/null; then
+  gs org.gnome.shell disable-user-extensions false
+  lamp=compiz-alike-magic-lamp-effect@hermes83.github.com; blur=blur-my-shell@aunetx; jp=just-perfection-desktop@just-perfection
+  install_ext 3740 $lamp; install_ext 3193 $blur; install_ext 3843 $jp
+  for e in $lamp $blur $jp; do [ -d "$ext_dir/$e" ] && enable_ext $e; done
+
+  if [ -d "$ext_dir/$jp" ]; then
+    j() { ext_set $jp org.gnome.shell.extensions.just-perfection "$@"; }
+    j panel-size 30                  # compact top bar (default 32)
+    j panel-button-padding-size 6
+    j panel-indicator-padding-size 4
+    j clock-menu-position 0          # clock in the centre
+    j world-clock false; j weather false; j events-button false
+    j accessibility-menu false; j keyboard-layout false
+    j panel-notification-icon false  # no separate notification dot
+  fi
+  if [ -d "$ext_dir/$blur" ]; then
+    b() { ext_set $blur org.gnome.shell.extensions.blur-my-shell"$1" "${@:2}"; }
+    b .panel blur true;            b .panel sigma 25;   b .panel brightness 0.7
+    b .panel static-blur true
+    b .overview blur true;         b .overview sigma 30
+    b .applications blur true;     b .applications enable-all false
+    b .applications whitelist "['Gnome-terminal', 'ulauncher', 'Ulauncher']"
+    b .applications sigma 25;      b .applications opacity 215
+  fi
 fi
+
+# Libadwaita (GTK4) apps: Files, Settings... The WhiteSur symlinks from the Cinnamon makeover are kept as *.whitesur.bak
+mkdir -p ~/.config/gtk-4.0
+for f in gtk.css gtk-dark.css; do
+  t=~/.config/gtk-4.0/$f
+  if [ -L "$t" ]; then mv "$t" "$t.whitesur.bak"
+  elif [ -e "$t" ] && ! grep -q "Catppuccin Mocha for libadwaita" "$t"; then cp "$t" "$t.bak"; fi
+  install -m644 "$here/gtk4.css" "$t"
+done
+
+# Power: switch profile on plug/unplug + low-battery notifications (bin/power-watch, started at login)
+install -m755 "$here/bin/power-watch" ~/.local/bin/
+mkdir -p ~/.config/autostart
+cat > ~/.config/autostart/power-watch.desktop <<DESK
+[Desktop Entry]
+Type=Application
+Name=Power profile watcher
+Exec=$HOME/.local/bin/power-watch
+X-GNOME-Autostart-enabled=true
+DESK
+pgrep -f "$HOME/.local/bin/power-watch" >/dev/null || (setsid "$HOME/.local/bin/power-watch" >/dev/null 2>&1 &)
 
 # Touchpad gestures (touchegg). Restart the user client so it reloads the config.
 if command -v touchegg >/dev/null; then

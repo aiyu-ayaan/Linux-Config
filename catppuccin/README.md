@@ -7,6 +7,7 @@ Palette: base `#1e1e2e`, surface `#313244`, text `#cdd6f4`, mauve `#cba6f7`, pin
 |---|---|---|
 | GNOME Terminal + zsh prompt | colour palette, Powerlevel10k segments | terminal profile, [`../zsh/`](../zsh/README.md) |
 | Header bars and tabs (GTK3) | matching flat dark style | [`../gnome/gtk3.css`](../gnome/README.md) |
+| Files, Settings (GTK4) | libadwaita colour overrides | [`../gnome/gtk4.css`](../gnome/README.md) |
 | fzf | full Mocha colour set, rounded border | `zsh/config/zshrc` (`FZF_DEFAULT_OPTS`) |
 | bat | `Catppuccin Mocha` syntax theme | `bat/` → `~/.config/bat/themes`, `BAT_THEME` in `zsh/config/zshrc` |
 | btop | `catppuccin_mocha` | `btop/` → `~/.config/btop/themes`, `color_theme` in `btop.conf` |

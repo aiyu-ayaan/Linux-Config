@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Switch the power profile on plug/unplug and warn on low battery. Started at login by an autostart entry.
+#   AC      -> POWER_AC_PROFILE      (default: performance)
+#   Battery -> POWER_BAT_PROFILE     (default: balanced)
+# Warnings at 20% (normal) and 10% (critical) while discharging, once each per discharge.
+AC_PROFILE=${POWER_AC_PROFILE:-performance}
+BAT_PROFILE=${POWER_BAT_PROFILE:-balanced}
+bat=$(ls -d /sys/class/power_supply/BAT* 2>/dev/null | head -1)
+[ -n "$bat" ] || exit 0   # desktop PC: nothing to do
+last_state=; warned20=0; warned10=0
+while :; do
+  ac=0
+  for p in /sys/class/power_supply/A*/online /sys/class/power_supply/ACAD/online; do
+    [ -r "$p" ] && [ "$(cat "$p")" = 1 ] && ac=1 && break
+  done
+  cap=$(cat "$bat/capacity")
+  state=battery; [ $ac = 1 ] && state=ac
+  if [ "$state" != "$last_state" ]; then
+    if [ $ac = 1 ]; then
+      powerprofilesctl set "$AC_PROFILE" 2>/dev/null
+      warned20=0; warned10=0
+      [ -n "$last_state" ] && notify-send -i battery-full-charging -a Power "Charger connected" "Profile: $AC_PROFILE ($cap%)"
+    else
+      powerprofilesctl set "$BAT_PROFILE" 2>/dev/null
+      [ -n "$last_state" ] && notify-send -i battery-good -a Power "On battery" "Profile: $BAT_PROFILE ($cap%)"
+    fi
+    last_state=$state
+  fi
+  if [ $ac = 0 ]; then
+    if [ "$cap" -le 10 ] && [ $warned10 = 0 ]; then
+      notify-send -u critical -i battery-caution -a Power "Battery critical: $cap%" "Plug in the charger now."; warned10=1; warned20=1
+    elif [ "$cap" -le 20 ] && [ $warned20 = 0 ]; then
+      notify-send -u normal -i battery-low -a Power "Battery low: $cap%" "Plug in the charger soon."; warned20=1
+    fi
+  fi
+  sleep 20
+done
