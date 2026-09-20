@@ -66,8 +66,15 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # fzf (Ctrl+R history, Ctrl+T files, Alt+C cd)
 if (( $+commands[fzf] )); then
   source <(fzf --zsh 2>/dev/null)
-  export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --color=bg+:#313244,fg+:#cdd6f4,hl:#f38ba8,pointer:#f5c2e7,prompt:#cba6f7'
+  # Catppuccin Mocha palette
+  export FZF_DEFAULT_OPTS=" --height 40% --layout=reverse --border=rounded \
+    --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+    --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+    --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8,border:#6c7086"
 fi
+
+# bat / man pages use the Catppuccin theme (installed by catppuccin/apply.sh)
+export BAT_THEME="Catppuccin Mocha"
 
 # zoxide: smarter cd  (use `z dir`, `zi` for interactive)
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
