@@ -38,9 +38,9 @@ gs org.gnome.desktop.wm.keybindings move-to-monitor-right "['<Super><Shift>Right
 gs org.gnome.mutter.keybindings toggle-tiled-left  "['<Super>Left']"
 gs org.gnome.mutter.keybindings toggle-tiled-right "['<Super>Right']"
 
-# Overview on Super+S (the touchegg gestures send it) and Super alone; Alt+Space stays the window menu
-gs org.gnome.desktop.wm.keybindings activate-window-menu "['<Alt>space']"
-gs org.gnome.shell.keybindings toggle-overview "['<Super>s']"
+# Overview: Alt+Space behaves like pressing Super (Super+S is what the touchegg gestures send). The window menu moves.
+gs org.gnome.desktop.wm.keybindings activate-window-menu "['<Shift><Alt>space']"
+gs org.gnome.shell.keybindings toggle-overview "['<Super>s','<Alt>space']"
 # File manager key
 gs org.gnome.settings-daemon.plugins.media-keys home "['<Super>e']"
 

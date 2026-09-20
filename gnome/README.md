@@ -15,7 +15,7 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md).
 | Add / close workspace | `Super+Ctrl+N` / `Super+Ctrl+W` (max 10, min 1) | `bin/ws-add`, `bin/ws-close` → `~/.local/bin`, custom keybindings |
 | Tiling | Edge tiling on, `Super+Left/Right` tile | `mutter` |
 | Shell | Hot corner on, battery % shown, `Super+1..9` no longer launch dock apps | interface, `shell.keybindings` |
-| Launcher | None. Ulauncher was tried and removed; `Super` (or `Super+S`) opens the GNOME overview / search, `Alt+Space` is the window menu | `wm.keybindings`, `shell.keybindings` |
+| Overview / search | `Alt+Space`, `Super+S` and `Super` alone all open the GNOME overview (type to search apps). Window menu is on `Shift+Alt+Space`. Ulauncher was tried and removed | `wm.keybindings`, `shell.keybindings` |
 | Files | `Super+E` opens Files | `media-keys home` |
 | Touchpad | Tap to click (natural scroll already default-on) | `peripherals.touchpad` |
 | Power | Suspend after 100 min on AC, 20 min on battery | `plugins.power` |
