@@ -29,6 +29,15 @@ buttons that light up mauve on hover, round window buttons (close turns red), ta
 rounded window corners. It applies to every GTK3 app with a header bar (GNOME Terminal, and others), not just the terminal.
 Tweak the `@define-color` values at the top. Undo: `rm ~/.config/gtk-3.0/gtk.css` (or restore the `.bak`) and reopen the app.
 
+## Window animations (Mac-style genie)
+`apply.sh` installs and enables the GNOME extension **Compiz alike magic lamp effect** (extensions.gnome.org #3740, needs
+internet once). Minimising a window now sucks it into the dock/taskbar like the macOS genie, and restoring pulls it back out.
+**Restart the shell once to load it: `Alt+F2`, type `r`, Enter** (X11 keeps your windows open).
+Speed and style: open the extension's settings (Extension Manager > Compiz alike magic lamp effect > gear, or
+`gnome-extensions prefs compiz-alike-magic-lamp-effect@hermes83.github.com`). Default duration is 400 ms.
+Open / close / maximise keep GNOME's built-in zoom-and-fade animations (`enable-animations true`), which already resemble macOS.
+Undo: `gnome-extensions disable compiz-alike-magic-lamp-effect@hermes83.github.com`.
+
 ## Gestures (touchegg)
 `touchegg.conf` is copied to `~/.config/touchegg/` by `apply.sh`, which also restarts the client. Needs `sudo apt install touchegg` (X11 only).
 | Gesture | Action |
@@ -55,7 +64,7 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
 
 ## Not scripted (machine-specific)
 - Wallpaper / lock screen image: `~/.local/share/backgrounds/`, set via `org.gnome.desktop.background picture-uri(-dark)`.
-- No GNOME Shell extensions are enabled (`enabled-extensions` is empty); Extension Manager and Tweaks are installed.
+- The only GNOME Shell extension enabled is the magic lamp effect; Extension Manager and Tweaks are installed.
 - Dock favourites: Files, Chrome, Terminal, VS Code.
 
 ## Undo

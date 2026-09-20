@@ -70,6 +70,25 @@ if [ -e ~/.config/gtk-3.0/gtk.css ] && ! grep -q "Catppuccin Mocha polish" ~/.co
 fi
 install -m644 "$here/gtk3.css" ~/.config/gtk-3.0/gtk.css
 
+# Mac-style genie minimise / restore (GNOME extension "Compiz alike magic lamp effect", #3740, needs internet once)
+# The shell must be restarted to load it: Alt+F2, type r, Enter (X11 keeps your windows).
+lamp=compiz-alike-magic-lamp-effect@hermes83.github.com
+if command -v gnome-extensions >/dev/null; then
+  if [ ! -d ~/.local/share/gnome-shell/extensions/$lamp ]; then
+    tmp=$(mktemp -d); ver=$(gnome-shell --version | grep -o '[0-9]*' | head -1)
+    pk=$(curl -fsS "https://extensions.gnome.org/extension-info/?pk=3740&shell_version=$ver" | python3 -c 'import sys,json;print(json.load(sys.stdin)["download_url"])') &&
+    curl -fsSL "https://extensions.gnome.org$pk" -o "$tmp/lamp.zip" &&
+    gnome-extensions install --force "$tmp/lamp.zip" || echo "skipped: could not install magic lamp"
+    rm -rf "$tmp"
+  fi
+  gs org.gnome.shell disable-user-extensions false
+  cur=$(gsettings get org.gnome.shell enabled-extensions)
+  case $cur in *"$lamp"*) ;; *)
+    cur=${cur/@as /}; cur=${cur%]}; [ "$cur" = "[" ] || cur="$cur, "
+    gsettings set org.gnome.shell enabled-extensions "$cur'$lamp']";;
+  esac
+fi
+
 # Touchpad gestures (touchegg). Restart the user client so it reloads the config.
 if command -v touchegg >/dev/null; then
   mkdir -p ~/.config/touchegg
