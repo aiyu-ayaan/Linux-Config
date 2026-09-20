@@ -70,49 +70,23 @@ if [ -e ~/.config/gtk-3.0/gtk.css ] && ! grep -q "Catppuccin Mocha polish" ~/.co
 fi
 install -m644 "$here/gtk3.css" ~/.config/gtk-3.0/gtk.css
 
-# GNOME Shell extensions (need internet once; the shell must be restarted to load them: Alt+F2, r, Enter on X11)
-#   3740 Compiz alike magic lamp effect: Mac-style genie minimise / restore
-#    307 Dash to Dock: bottom dock that hides while a window is maximised and reappears at the bottom edge
-ext_dir=~/.local/share/gnome-shell/extensions
-install_ext() { # pk uuid
-  [ -d "$ext_dir/$2" ] && return 0
-  local tmp ver url; tmp=$(mktemp -d); ver=$(gnome-shell --version | grep -o '[0-9]*' | head -1)
-  url=$(curl -fsS "https://extensions.gnome.org/extension-info/?pk=$1&shell_version=$ver" | python3 -c 'import sys,json;print(json.load(sys.stdin)["download_url"])') &&
-    curl -fsSL "https://extensions.gnome.org$url" -o "$tmp/e.zip" &&
-    gnome-extensions install --force "$tmp/e.zip" || echo "skipped: could not install $2"
-  rm -rf "$tmp"
-}
-enable_ext() {
-  local cur; cur=$(gsettings get org.gnome.shell enabled-extensions)
-  case $cur in *"$1"*) ;; *)
-    cur=${cur/@as /}; cur=${cur%]}; [ "$cur" = "[" ] || cur="$cur, "
-    gsettings set org.gnome.shell enabled-extensions "$cur'$1']";;
-  esac
-}
+# Mac-style genie minimise / restore (GNOME extension "Compiz alike magic lamp effect", #3740, needs internet once)
+# The shell must be restarted to load it: Alt+F2, type r, Enter (X11 keeps your windows).
+lamp=compiz-alike-magic-lamp-effect@hermes83.github.com
 if command -v gnome-extensions >/dev/null; then
-  gs org.gnome.shell disable-user-extensions false
-  lamp=compiz-alike-magic-lamp-effect@hermes83.github.com
-  dock=dash-to-dock@micxgx.gmail.com
-  install_ext 3740 $lamp; install_ext 307 $dock
-  [ -d "$ext_dir/$lamp" ] && enable_ext $lamp
-  if [ -d "$ext_dir/$dock" ]; then
-    enable_ext $dock
-    d() { GSETTINGS_SCHEMA_DIR="$ext_dir/$dock/schemas" gsettings set org.gnome.shell.extensions.dash-to-dock "$@"; }
-    d dock-position BOTTOM
-    d dock-fixed false            # floating dock, not a full-width panel
-    d extend-height false
-    d intellihide true
-    d intellihide-mode MAXIMIZED_WINDOWS   # hide only while a window is maximised
-    d autohide true
-    d require-pressure-to-show false       # touching the bottom edge is enough
-    d show-delay 0.1
-    d hide-delay 0.2
-    d animation-time 0.25
-    d transparency-mode DYNAMIC
-    d click-action minimize                # click a running app's icon to minimise / restore it
-    d show-mounts false
-    d hot-keys false                       # keep Super+1..4 for workspaces
+  if [ ! -d ~/.local/share/gnome-shell/extensions/$lamp ]; then
+    tmp=$(mktemp -d); ver=$(gnome-shell --version | grep -o '[0-9]*' | head -1)
+    pk=$(curl -fsS "https://extensions.gnome.org/extension-info/?pk=3740&shell_version=$ver" | python3 -c 'import sys,json;print(json.load(sys.stdin)["download_url"])') &&
+    curl -fsSL "https://extensions.gnome.org$pk" -o "$tmp/lamp.zip" &&
+    gnome-extensions install --force "$tmp/lamp.zip" || echo "skipped: could not install magic lamp"
+    rm -rf "$tmp"
   fi
+  gs org.gnome.shell disable-user-extensions false
+  cur=$(gsettings get org.gnome.shell enabled-extensions)
+  case $cur in *"$lamp"*) ;; *)
+    cur=${cur/@as /}; cur=${cur%]}; [ "$cur" = "[" ] || cur="$cur, "
+    gsettings set org.gnome.shell enabled-extensions "$cur'$lamp']";;
+  esac
 fi
 
 # Touchpad gestures (touchegg). Restart the user client so it reloads the config.

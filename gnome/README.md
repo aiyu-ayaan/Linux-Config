@@ -29,18 +29,6 @@ buttons that light up mauve on hover, round window buttons (close turns red), ta
 rounded window corners. It applies to every GTK3 app with a header bar (GNOME Terminal, and others), not just the terminal.
 Tweak the `@define-color` values at the top. Undo: `rm ~/.config/gtk-3.0/gtk.css` (or restore the `.bak`) and reopen the app.
 
-## Auto-hiding dock (Dash to Dock)
-`apply.sh` installs and enables **Dash to Dock** (extensions.gnome.org #307) as a floating dock at the bottom of the screen.
-- While a window is **maximised** the dock hides; move the pointer to the bottom edge and it slides in. It also hides
-  whenever a maximised window would cover it and shows again on an empty desktop or over non-maximised windows.
-- Clicking a running app's icon minimises / restores it. `Super+1..4` stay workspace shortcuts (the dock's own app
-  hotkeys are off).
-- Load it with **`Alt+F2`, type `r`, Enter** after the first `apply.sh` run.
-- Change behaviour with `GSETTINGS_SCHEMA_DIR=~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/schemas gsettings set org.gnome.shell.extensions.dash-to-dock <key> <value>`
-  (keys used are in `apply.sh`). For example `intellihide-mode ALL_WINDOWS` hides the dock whenever any window overlaps it,
-  and `intellihide false` keeps it always visible.
-- Undo: `gnome-extensions disable dash-to-dock@micxgx.gmail.com`.
-
 ## Window animations (Mac-style genie)
 `apply.sh` installs and enables the GNOME extension **Compiz alike magic lamp effect** (extensions.gnome.org #3740, needs
 internet once). Minimising a window now sucks it into the dock/taskbar like the macOS genie, and restoring pulls it back out.
@@ -76,7 +64,7 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
 
 ## Not scripted (machine-specific)
 - Wallpaper / lock screen image: `~/.local/share/backgrounds/`, set via `org.gnome.desktop.background picture-uri(-dark)`.
-- The GNOME Shell extensions enabled are the magic lamp effect and Dash to Dock; Extension Manager and Tweaks are installed.
+- The only GNOME Shell extension enabled is the magic lamp effect; Extension Manager and Tweaks are installed.
 - Dock favourites: Files, Chrome, Terminal, VS Code.
 
 ## Undo
