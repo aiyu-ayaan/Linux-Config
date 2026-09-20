@@ -40,6 +40,7 @@ gs org.gnome.mutter.keybindings toggle-tiled-right "['<Super>Right']"
 
 # Launcher / file manager keys. Alt+Space belongs to Ulauncher, so the window menu moves.
 gs org.gnome.desktop.wm.keybindings activate-window-menu "['<Shift><Alt>space']"
+gs org.gnome.shell.keybindings toggle-overview "['<Super>s']"   # was Alt+Space, which stole the key from Ulauncher
 gs org.gnome.settings-daemon.plugins.media-keys home "['<Super>e']"
 
 # Touchpad / power

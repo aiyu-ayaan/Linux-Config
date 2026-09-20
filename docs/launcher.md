@@ -1,6 +1,7 @@
 # Ulauncher (Spotlight / PowerToys Run style)
 
-- Hotkey: **Alt+Space** (window menu moved to Shift+Alt+Space)
+- Hotkey: **Alt+Space** (window menu moved to Shift+Alt+Space; the GNOME overview shortcut `toggle-overview` was also on Alt+Space and
+  opened the Activities screen instead, so it is now `Super+S`)
 - Config: `~/.config/ulauncher/settings.json` (dark theme, 3 recent apps)
 - Autostart: `~/.config/autostart/ulauncher.desktop` (`ulauncher --hide-window`)
 
@@ -18,3 +19,4 @@ window switcher, and plocate file search.
     sudo add-apt-repository --remove ppa:agornostal/ulauncher
     rm ~/.config/autostart/ulauncher.desktop
     gsettings reset org.gnome.desktop.wm.keybindings activate-window-menu
+    gsettings reset org.gnome.shell.keybindings toggle-overview   # note: gives Alt+Space back to the overview
