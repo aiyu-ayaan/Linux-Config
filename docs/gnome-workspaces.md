@@ -11,6 +11,7 @@ Applied with `gsettings` on 2026-09-20 (GNOME on X11, Linux Mint 22.3).
 | Super+Shift+1 … 4 | Move window to workspace 1–4 |
 | Ctrl+Alt+Shift+Left / Right, Super+Shift+PageUp / PageDown | Move window to prev / next workspace |
 | Super+Left / Right | Tile window left / right (window management) |
+| Super+D | Show desktop: hide all windows on the current workspace only; press again to restore them with focus (Windows Win+D) |
 | Super (alone) | Activities overview |
 
 Workspaces are fixed at 4 (dynamic workspaces off).
@@ -23,6 +24,7 @@ Super+1..9 no longer launch dock apps (`switch-to-application-N` cleared).
 
 ## Undo
     gsettings reset-recursively org.gnome.desktop.wm.keybindings
+    gsettings reset org.gnome.desktop.wm.keybindings show-desktop
     gsettings reset-recursively org.gnome.shell.keybindings
     gsettings reset org.gnome.mutter dynamic-workspaces
     gsettings reset org.gnome.desktop.wm.preferences button-layout

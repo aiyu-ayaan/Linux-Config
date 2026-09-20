@@ -43,6 +43,9 @@ gs org.gnome.mutter.keybindings toggle-tiled-right "['<Super>Right']"
 # Overview: Alt+Space behaves like pressing Super (Super+S is what the touchegg gestures send). The window menu moves.
 gs org.gnome.desktop.wm.keybindings activate-window-menu "['<Shift><Alt>space']"
 gs org.gnome.shell.keybindings toggle-overview "['<Super>s','<Alt>space']"
+# Show desktop (Windows Win+D): hide all windows on the current workspace only;
+# press again to restore them with focus (per-workspace showing_desktop in mutter).
+gs org.gnome.desktop.wm.keybindings show-desktop "['<Super>d']"
 # File manager key
 gs org.gnome.settings-daemon.plugins.media-keys home "['<Super>e']"
 
@@ -50,6 +53,35 @@ gs org.gnome.settings-daemon.plugins.media-keys home "['<Super>e']"
 gs org.gnome.desktop.peripherals.touchpad tap-to-click true
 gs org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 6000
 gs org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 1200
+
+# Notifications / OSD / sound (banner style is shell-themed; keep banners on, lock-screen off)
+gs org.gnome.desktop.notifications show-banners true
+gs org.gnome.desktop.notifications show-in-lock-screen false
+gs org.gnome.desktop.sound event-sounds true
+gs org.gnome.desktop.sound input-feedback-sounds false
+
+# Files (Nautilus, GTK4): location entry, thumbnails, counts — matches dark sidebar in gtk4.css
+gs org.gnome.nautilus.preferences always-use-location-entry true || true
+gs org.gnome.nautilus.preferences show-image-thumbnails 'always' || true
+gs org.gnome.nautilus.preferences show-directory-item-counts 'always' || true
+gs org.gnome.nautilus.list-view default-zoom-level 'small' || true
+
+# Chrome / Chromium: force dark WebUI + GTK theme so it follows Mocha (needs relaunch)
+mkdir -p ~/.config
+if ! grep -qs "force-dark-mode" ~/.config/chrome-flags.conf 2>/dev/null; then
+  cat >> ~/.config/chrome-flags.conf <<'FLAGS'
+--force-dark-mode
+--enable-features=WebUIDarkMode
+--gtk-version=4
+FLAGS
+fi
+
+# Qt apps: Adwaita-dark + qt5ct Mocha palette (needs: sudo apt install qt5ct adwaita-qt qt6ct)
+mkdir -p ~/.config/environment.d
+cat > ~/.config/environment.d/10-qt-mocha.conf <<'ENV'
+QT_QPA_PLATFORMTHEME=qt5ct
+QT_STYLE_OVERRIDE=adwaita-dark
+ENV
 
 # Custom shortcuts for ws-add / ws-close (clipsnip registers its own; append, don't overwrite)
 base=/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings
@@ -67,6 +99,10 @@ add_key() { # id name command binding
 }
 add_key ws-add   'New workspace'         "$HOME/.local/bin/ws-add"   '<Super><Control>n'
 add_key ws-close 'Close last workspace'  "$HOME/.local/bin/ws-close" '<Super><Control>w'
+# Rofi app launcher (Catppuccin theme in catppuccin/rofi/): Super+Space. Install: sudo apt install rofi
+if command -v rofi >/dev/null; then
+  add_key rofi-drun 'App launcher (rofi)' 'rofi -show drun' '<Super>space'
+fi
 # Header bar / tab styling for GTK3 apps (GNOME Terminal)
 mkdir -p ~/.config/gtk-3.0
 if [ -e ~/.config/gtk-3.0/gtk.css ] && ! grep -q "Catppuccin Mocha polish" ~/.config/gtk-3.0/gtk.css; then
@@ -78,6 +114,9 @@ install -m644 "$here/gtk3.css" ~/.config/gtk-3.0/gtk.css
 #   3740 Compiz alike magic lamp effect: Mac-style genie minimise / restore
 #   3193 Blur my Shell: blur behind the top bar, overview, terminal
 #   3843 Just Perfection: compact top bar, centred clock, fewer icons
+#   1460 Vitals: CPU / mem / net in the top bar (system monitor)
+#   4470 Media Controls (MPRIS): player controls in the top bar
+#   4105 Notification Banner Position: move banners (top bar OSD position)
 ext_dir=~/.local/share/gnome-shell/extensions
 install_ext() { # pk uuid
   [ -d "$ext_dir/$2" ] && return 0
@@ -100,11 +139,13 @@ ext_set() { # uuid schema key value  (extension schemas are not on the default s
 if command -v gnome-extensions >/dev/null; then
   gs org.gnome.shell disable-user-extensions false
   lamp=compiz-alike-magic-lamp-effect@hermes83.github.com; blur=blur-my-shell@aunetx; jp=just-perfection-desktop@just-perfection
+  vitals='Vitals@CoreCoding.com'; media='mediacontrols@cliffniff.github.com'; nbpos='notification-position@drugo.dev'
   install_ext 3740 $lamp; install_ext 3193 $blur; install_ext 3843 $jp
+  install_ext 1460 $vitals; install_ext 4470 $media; install_ext 4105 $nbpos
   # Local extension (in this repo): dash click opens a new window on the current workspace
   iso=workspace-isolation@aiyu.local
   mkdir -p "$ext_dir" && rm -rf "${ext_dir:?}/$iso" && cp -r "$here/extensions/$iso" "$ext_dir/"
-  for e in $lamp $blur $jp $iso; do [ -d "$ext_dir/$e" ] && enable_ext $e; done
+  for e in $lamp $blur $jp $vitals $media $nbpos $iso; do [ -d "$ext_dir/$e" ] && enable_ext $e; done
 
   if [ -d "$ext_dir/$jp" ]; then
     j() { ext_set $jp org.gnome.shell.extensions.just-perfection "$@"; }
@@ -124,6 +165,21 @@ if command -v gnome-extensions >/dev/null; then
     b .applications blur true;     b .applications enable-all false
     b .applications whitelist "['Gnome-terminal']"
     b .applications sigma 25;      b .applications opacity 215
+  fi
+  if [ -d "$ext_dir/$vitals" ]; then
+    v() { ext_set $vitals org.gnome.shell.extensions.vitals "$@"; }
+    v show-processor true; v show-memory true; v show-system true
+    v show-network true; v show-temperature false; v show-voltage false
+    v position-in-panel 2; v update-time 2
+  fi
+  if [ -d "$ext_dir/$media" ]; then
+    m() { ext_set $media org.gnome.shell.extensions.mediacontrols "$@"; }
+    m show-control-icons true; m show-player-icon true; m show-label true
+    m colored-player-icon true; m show-track-slider true
+  fi
+  if [ -d "$ext_dir/$nbpos" ]; then
+    n() { ext_set $nbpos org.gnome.shell.extensions.notification-position "$@"; }
+    n position 1
   fi
 fi
 

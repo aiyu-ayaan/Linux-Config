@@ -16,8 +16,14 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md).
 | Add / close workspace | `Super+Ctrl+N` / `Super+Ctrl+W` (max 10, min 1) | `bin/ws-add`, `bin/ws-close` → `~/.local/bin`, custom keybindings |
 | Tiling | Edge tiling on, `Super+Left/Right` tile | `mutter` |
 | Shell | Hot corner on, battery % shown, `Super+1..9` no longer launch dock apps | interface, `shell.keybindings` |
-| Overview / search | `Alt+Space`, `Super+S` and `Super` alone all open the GNOME overview (type to search apps). Window menu is on `Shift+Alt+Space`. Ulauncher was tried and removed | `wm.keybindings`, `shell.keybindings` |
-| Files | `Super+E` opens Files | `media-keys home` |
+| Show desktop | `Super+D` hides all windows on the current workspace only; press again to restore them with focus (Windows Win+D) | `wm.keybindings show-desktop` |
+| Overview / search | `Alt+Space`, `Super+S` and `Super` alone open the GNOME overview. `Super+Space` opens rofi drun (if rofi installed). Window menu is on `Shift+Alt+Space`. Ulauncher was tried and removed | `wm.keybindings`, `shell.keybindings` |
+| Files | `Super+E` opens Files; Nautilus uses location entry, always thumbnails/counts, Mocha sidebar (`gtk4.css`) | `media-keys home`, `org.gnome.nautilus.preferences` |
+| Qt apps | `adwaita-dark` + qt5ct Mocha palette (`catppuccin/qt/qt5ct.conf`), needs `sudo apt install qt5ct adwaita-qt` | `~/.config/environment.d/10-qt-mocha.conf` |
+| Chrome | dark WebUI + GTK4 (`~/.config/chrome-flags.conf`, relaunch to apply) | `gnome/apply.sh` |
+| Notifications / OSD | banners on, lock-screen banners off; banner position via extension | `org.gnome.desktop.notifications`, `notification-position@drugo.dev` |
+| Top bar monitor | Vitals: CPU / mem / net / system in panel | `Vitals@CoreCoding.com` (#1460) |
+| Media controls | MPRIS controls + track slider in panel | `mediacontrols@cliffniff.github.com` (#4470) |
 | Touchpad | Tap to click (natural scroll already default-on) | `peripherals.touchpad` |
 | Power | Suspend after 100 min on AC, 20 min on battery | `plugins.power` |
 | Clipboard / snipping | `Win+V`, `Win+Shift+S` | [`../clipsnip/`](../clipsnip/README.md) |
@@ -30,14 +36,20 @@ buttons that light up mauve on hover, round window buttons (close turns red), ta
 rounded window corners. It applies to every GTK3 app with a header bar (GNOME Terminal, and others), not just the terminal.
 Tweak the `@define-color` values at the top. Undo: `rm ~/.config/gtk-3.0/gtk.css` (or restore the `.bak`) and reopen the app.
 
-## Top bar and blur (Just Perfection + Blur my Shell)
-`apply.sh` installs and configures two more extensions (both need the shell restart: `Alt+F2`, `r`, Enter).
+## Top bar, monitor, media and blur (Just Perfection + Blur my Shell + Vitals + Media Controls)
+`apply.sh` installs and configures five more extensions (shell restart needed: `Alt+F2`, `r`, Enter).
 - **Just Perfection** (#3843): top bar 30 px high, tighter button padding, clock centred, and the world clock, weather,
   events, accessibility, keyboard-layout and notification-dot items hidden. Keys are in `apply.sh`; open its
   preferences in Extension Manager for more (e.g. hide the Activities button).
 - **Blur my Shell** (#3193): blurred top bar and overview, and blurred background for GNOME Terminal
   (application whitelist `Gnome-terminal`). Blur strength is `sigma` (25 to 30), window opacity 215/255.
   Add more apps to the whitelist under the extension's "Applications" page, or `enable-all` to blur every window.
+- **Vitals** (#1460): CPU / memory / network / system monitor in the top bar. Configured with
+  `show-processor/memory/system/network true`, temp/voltage off, 2s refresh.
+- **Media Controls** / MPRIS (#4470): player icon + label + prev/play/next + track slider in the top bar.
+- **Notification Banner Position** (#4105): banner OSD position (`position 1`).
+- **Rofi launcher**: Catppuccin Mocha theme from `../catppuccin/rofi/` (`~/.config/rofi/`), bound to
+  `Super+Space` when `rofi` is installed (`sudo apt install rofi`). Ulauncher remains removed.
 - Undo: `gnome-extensions disable blur-my-shell@aunetx just-perfection-desktop@just-perfection`
   (disable one at a time if the command only takes one uuid).
 
@@ -100,6 +112,7 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
 
 ## Undo
     gsettings reset-recursively org.gnome.desktop.wm.keybindings
+    gsettings reset org.gnome.desktop.wm.keybindings show-desktop
     gsettings reset-recursively org.gnome.shell.keybindings
     gsettings reset-recursively org.gnome.mutter
     gsettings reset org.gnome.desktop.wm.preferences button-layout
