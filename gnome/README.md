@@ -26,6 +26,7 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md).
 | Media controls | MPRIS controls + track slider in panel | `mediacontrols@cliffniff.github.com` (#4470) |
 | Sound menu | Volume slider + mute, and every output port (speakers, headphones, USB, HDMI) with a check on the active one | `extensions/audio-output-switcher@aiyu.local` (see below) |
 | Brightness menu | One slider per display (laptop panel + DDC/CI monitors), "All displays" slider, `Ctrl+Brightness keys` for all monitors | `extensions/display-brightness@aiyu.local` (see below) |
+| Multi-monitor | Launched apps open on the primary monitor, not the one under the mouse (Windows 11 style); login screen uses the session's layout and primary monitor | `extensions/open-on-primary@aiyu.local`, `login-monitors.sh` (root, run by hand). See [`../docs/hybrid-gpu-monitors.md`](../docs/hybrid-gpu-monitors.md), which also covers the NVIDIA / Intel GPU setup |
 | Touchpad | Tap to click (natural scroll already default-on) | `peripherals.touchpad` |
 | Power | Suspend after 100 min on AC, 20 min on battery | `plugins.power` |
 | Clipboard / snipping | `Win+V`, `Win+Shift+S` | [`../clipsnip/`](../clipsnip/README.md) |
@@ -91,6 +92,15 @@ with ~450 ms DDC sleeps, so the slider lagged and jumped. **On Wayland, log out 
 - Check logs: `journalctl --user -b | grep -E 'display-brightness|audio-output-switcher'`.
 - Undo: `gnome-extensions disable display-brightness@aiyu.local` (or `audio-output-switcher@aiyu.local`).
 
+## Multi-monitor placement (local extension + login screen)
+**`open-on-primary@aiyu.local`**: a new window moves to the primary monitor when it is the app's first window or the app
+was just launched from the dash, dock, overview or search. Dialogs and windows an open app creates itself (`Ctrl+N`, a
+tab dragged out) keep mutter's placement. Undo: `gnome-extensions disable open-on-primary@aiyu.local`.
+
+**`login-monitors.sh`**: copies `~/.config/monitors.xml` to `/var/lib/gdm3/.config/` (sudo) so the login screen shows on
+the primary monitor with the right rotation. Re-run after changing the layout. Undo: `sudo rm /var/lib/gdm3/.config/monitors.xml`.
+Details and the GPU setup (`prime-select nvidia` on X11): [`../docs/hybrid-gpu-monitors.md`](../docs/hybrid-gpu-monitors.md).
+
 ## GTK4 / libadwaita apps (`gtk4.css`)
 Files, Settings and other libadwaita apps read `~/.config/gtk-4.0/gtk.css` and `gtk-dark.css`. Those were symlinks to the
 WhiteSur theme from the Cinnamon makeover; `apply.sh` renames them to `*.whitesur.bak` and installs `gtk4.css`, which
@@ -147,7 +157,7 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
 
 ## Not scripted (machine-specific)
 - Wallpaper / lock screen image: `~/.local/share/backgrounds/`, set via `org.gnome.desktop.background picture-uri(-dark)`.
-- GNOME Shell extensions enabled: magic lamp effect, Blur my Shell and Just Perfection, plus the local sound and brightness menus; Extension Manager and Tweaks are installed.
+- GNOME Shell extensions enabled: magic lamp effect, Blur my Shell and Just Perfection, plus the local sound and brightness menus and open-on-primary; Extension Manager and Tweaks are installed.
 - Dock favourites: Files, Chrome, Terminal, VS Code.
 
 ## Undo

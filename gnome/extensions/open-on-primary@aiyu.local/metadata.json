@@ -1,0 +1,6 @@
+{
+  "uuid": "open-on-primary@aiyu.local",
+  "name": "Open on Primary",
+  "description": "Windows 11 style window placement: apps you launch open on the primary monitor instead of the monitor under the mouse. New windows from an app that is already open (Ctrl+N, tab drag) keep mutter's normal placement.",
+  "shell-version": ["46"]
+}
