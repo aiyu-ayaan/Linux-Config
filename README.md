@@ -3,6 +3,12 @@
 Personal Linux setup kits and notes (Linux Mint / Cinnamon / GNOME on X11). Each kit is self-contained:
 copy the folder to another machine and run its installer. No root needed unless noted.
 
+## Desktop
+
+![My desktop: GNOME on X11 with a blurred compact top bar, media controls, Vitals and a dock](docs/images/desktop.jpg)
+
+Primary monitor of the current setup (GNOME 46 on X11, Linux Mint 22.3): compact blurred top bar with media controls, system monitor, sound and brightness menus, and the dock. Reapplied by [`gnome/apply.sh`](gnome/README.md).
+
 ## Contents
 
 | Path | What it is |
