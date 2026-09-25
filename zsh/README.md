@@ -1,7 +1,7 @@
 # Zsh kit
 
 Oh My Zsh + Powerlevel10k (icons) + zsh-autosuggestions + zsh-autocomplete +
-fast-syntax-highlighting + fzf / eza / bat / zoxide, with FiraCode Nerd Font.
+fast-syntax-highlighting + fzf / eza / bat / zoxide / delta / lazygit / yazi, with FiraCode Nerd Font.
 
 ## Use anywhere
 Copy this folder to any Linux machine (needs `zsh git curl tar`), then:
@@ -18,8 +18,9 @@ Re-running is safe. No sudo needed. To make zsh your login shell: `chsh -s $(whi
 
 ## Handy keys
 - `→` / `Ctrl+Space` accept grey suggestion   - `Tab` complete, `↓` enter menu
-- `Ctrl+R` history search (fzf)   - `Ctrl+T` file picker   - `Alt+C` cd picker
-- `z <dir>` jump   - `ll`, `lt` icon listings
+- `Ctrl+R` history search (fzf + preview)   - `Ctrl+T` file picker (bat preview)   - `Alt+C` cd picker (eza tree)
+- `Ctrl-/` toggles fzf preview   - `z <dir>` / `zi` jump   - `ll`, `lt` icon listings
+- `lg` lazygit   - `y` yazi (`yazi-cd` cds on exit)   - `fbat` fuzzy-open in bat
 
 Turn off the live completion popup: add `export ZSH_KIT_AUTOCOMPLETE=0` to the bottom of `~/.zshrc`.
 

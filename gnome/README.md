@@ -24,6 +24,8 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md).
 | Notifications / OSD | banners on, lock-screen banners off; banner position via extension | `org.gnome.desktop.notifications`, `notification-position@drugo.dev` |
 | Top bar monitor | Vitals: CPU / mem / net / system in panel | `Vitals@CoreCoding.com` (#1460) |
 | Media controls | MPRIS controls + track slider in panel | `mediacontrols@cliffniff.github.com` (#4470) |
+| Sound menu | Volume slider + mute, and every output port (speakers, headphones, USB, HDMI) with a check on the active one | `extensions/audio-output-switcher@aiyu.local` (see below) |
+| Brightness menu | One slider per display (laptop panel + DDC/CI monitors), "All displays" slider, `Ctrl+Brightness keys` for all monitors | `extensions/display-brightness@aiyu.local` (see below) |
 | Touchpad | Tap to click (natural scroll already default-on) | `peripherals.touchpad` |
 | Power | Suspend after 100 min on AC, 20 min on battery | `plugins.power` |
 | Clipboard / snipping | `Win+V`, `Win+Shift+S` | [`../clipsnip/`](../clipsnip/README.md) |
@@ -52,6 +54,42 @@ Tweak the `@define-color` values at the top. Undo: `rm ~/.config/gtk-3.0/gtk.css
   `Super+Space` when `rofi` is installed (`sudo apt install rofi`). Ulauncher remains removed.
 - Undo: `gnome-extensions disable blur-my-shell@aunetx just-perfection-desktop@just-perfection`
   (disable one at a time if the command only takes one uuid).
+
+## Sound and brightness menus (local extensions)
+Both live in `extensions/` and are copied into `~/.local/share/gnome-shell/extensions/` by `apply.sh`. They were rewritten
+from scratch on 2026-09-25 because the old versions did not work: the sound menu rebuilt itself on every volume change
+(clicks landed on destroyed items), and the upstream ddcutil brightness extension fired overlapping `ddcutil` writes
+with ~450 ms DDC sleeps, so the slider lagged and jumped. **On Wayland, log out and back in to load a changed extension**
+(`Alt+F2`, `r` only works on X11).
+
+**`audio-output-switcher@aiyu.local`** (speaker / USB / HDMI icon in the top bar)
+- Volume slider, mute button and percentage for the current output. It uses the shell's own mixer (Gvc), the same one
+  GNOME's quick-settings slider uses, so dragging is instant. Scroll on the icon to change volume (5% steps, OSD shown).
+- Output list from `pactl -f json list sinks`: one row per port, the active one ticked. Ports PipeWire marks
+  "not available" are still listed ("not detected"), because the laptop speakers hide behind a misdetected headphone
+  jack. Picking one runs `pactl set-sink-port` then `pactl set-default-sink`.
+- The list refreshes on mixer events (device added/removed, default output changed) and when the menu opens. An open
+  menu is only rebuilt when the set of outputs really changed; otherwise just the tick moves.
+- Needs `pactl` (`sudo apt install pulseaudio-utils`).
+
+**`display-brightness@aiyu.local`** (sun icon in the top bar)
+- Built-in panel: `org.gnome.SettingsDaemon.Power.Screen` over D-Bus (the path GNOME's own slider uses), synced with
+  the Fn keys.
+- External monitors: found with `ddcutil detect --brief`, brightness is VCP `10`. Each monitor has one writer: while a
+  `setvcp` runs, new slider positions only replace the pending value, and the next write sends the latest one. Writes
+  use `--noverify --sleep-multiplier 0.1` (~70 ms here instead of ~450 ms). If a fast write fails the monitor falls
+  back to normal DDC timing. Monitors that answer no brightness read are left out.
+- "All displays" slider when there is more than one display (shows the average). Scroll on the icon, or
+  `Ctrl+XF86MonBrightnessUp/Down`, moves every display by 5% and shows the OSD. Values are re-read each time the menu
+  opens (not while you drag). Monitor hotplug triggers a new detection after 3 s; "Detect displays again" in the menu
+  does it by hand.
+- Settings (no prefs window): `GSETTINGS_SCHEMA_DIR=~/.local/share/gnome-shell/extensions/display-brightness@aiyu.local/schemas
+  gsettings set org.gnome.shell.extensions.display-brightness-aiyu step 2` (also `increase-shortcut`, `decrease-shortcut`).
+- Needs `ddcutil` and access to `/dev/i2c-*`: `sudo apt install ddcutil && sudo usermod -aG i2c $USER` (log in again).
+  The laptop panel shows as an "Invalid display" in `ddcutil detect`; that is expected, it is handled by the backlight.
+- Replaces `display-brightness-ddcutil@themightydeity.github.com`, which `apply.sh` disables (it was uninstalled here).
+- Check logs: `journalctl --user -b | grep -E 'display-brightness|audio-output-switcher'`.
+- Undo: `gnome-extensions disable display-brightness@aiyu.local` (or `audio-output-switcher@aiyu.local`).
 
 ## GTK4 / libadwaita apps (`gtk4.css`)
 Files, Settings and other libadwaita apps read `~/.config/gtk-4.0/gtk.css` and `gtk-dark.css`. Those were symlinks to the
@@ -109,7 +147,7 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
 
 ## Not scripted (machine-specific)
 - Wallpaper / lock screen image: `~/.local/share/backgrounds/`, set via `org.gnome.desktop.background picture-uri(-dark)`.
-- GNOME Shell extensions enabled: magic lamp effect, Blur my Shell and Just Perfection; Extension Manager and Tweaks are installed.
+- GNOME Shell extensions enabled: magic lamp effect, Blur my Shell and Just Perfection, plus the local sound and brightness menus; Extension Manager and Tweaks are installed.
 - Dock favourites: Files, Chrome, Terminal, VS Code.
 
 ## Undo

@@ -1,0 +1,86 @@
+# Catppuccin Mocha for yazi. Installed to ~/.config/yazi/theme.toml by catppuccin/apply.sh.
+# Palette: base #1e1e2e mantle #181825 crust #11111b text #cdd6f4 mauve #cba6f7 blue #89b4fa.
+
+[manager]
+cwd = { fg = "#89b4fa", bold = true }
+
+hovered         = { fg = "#1e1e2e", bg = "#cba6f7" }
+preview_hovered = { fg = "#1e1e2e", bg = "#cba6f7" }
+
+find_keyword  = { fg = "#f9e2af", bold = true, underline = true }
+find_position = { fg = "#f5c2e7", bg = "#45475a", bold = true }
+
+marker_copied   = { fg = "#a6e3a1", bg = "#a6e3a1" }
+marker_cut      = { fg = "#f38ba8", bg = "#f38ba8" }
+marker_marked   = { fg = "#f9e2af", bg = "#f9e2af" }
+marker_selected = { fg = "#cba6f7", bg = "#cba6f7" }
+
+tab_active   = { fg = "#1e1e2e", bg = "#cba6f7" }
+tab_inactive = { fg = "#a6adc8", bg = "#313244" }
+tab_width    = 1
+
+border_symbol = "rounded"
+border_style  = { fg = "#45475a" }
+
+[status]
+separator_open  = ""
+separator_close = ""
+separator_style = { fg = "#313244", bg = "#313244" }
+
+overall   = { fg = "#cdd6f4", bg = "#313244" }
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+progress_label  = { fg = "#cdd6f4", bold = true }
+progress_normal = { fg = "#313244", bg = "#313244" }
+progress_error  = { fg = "#f38ba8", bg = "#313244" }
+
+permissions_t = { fg = "#a6e3a1" }
+permissions_r = { fg = "#f9e2af" }
+permissions_w = { fg = "#f38ba8" }
+permissions_x = { fg = "#89b4fa" }
+permissions_s = { fg = "#6c7086" }
+
+[input]
+border   = { fg = "#cba6f7" }
+title    = { fg = "#cba6f7", bold = true }
+value    = { fg = "#cdd6f4" }
+selected = { reversed = true }
+
+[select]
+border   = { fg = "#89b4fa" }
+active   = { fg = "#cba6f7", bold = true }
+inactive = { fg = "#a6adc8" }
+
+[tasks]
+border  = { fg = "#45475a" }
+title   = { fg = "#89b4fa", bold = true }
+hovered = { fg = "#cba6f7", bold = true }
+
+[which]
+mask            = { bg = "#313244" }
+cand            = { fg = "#89b4fa" }
+rest            = { fg = "#6c7086" }
+desc            = { fg = "#f5c2e7" }
+separator       = "  "
+separator_style = { fg = "#6c7086" }
+
+[help]
+on      = { fg = "#f9e2af" }
+run     = { fg = "#f5c2e7" }
+desc    = { fg = "#a6adc8" }
+hovered = { fg = "#1e1e2e", bg = "#cba6f7" }
+footer  = { fg = "#45475a", bg = "#cdd6f4" }
+
+[filetype]
+rules = [
+  { mime = "image/*", fg = "#f5c2e7" },
+  { mime = "video/*", fg = "#f9e2af" },
+  { mime = "audio/*", fg = "#f9e2af" },
+  { mime = "application/zip", fg = "#f38ba8" },
+  { mime = "application/gzip", fg = "#f38ba8" },
+  { mime = "application/x-{tar,bzip*,xz}", fg = "#f38ba8" },
+  { name = "*.md", fg = "#89b4fa" },
+  { name = "*.sh", fg = "#a6e3a1" },
+  { name = "{COPYING,LICENSE}*", fg = "#6c7086" },
+]

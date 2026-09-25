@@ -1,0 +1,60 @@
+/* Catppuccin Mocha for rofi. Installed to ~/.config/rofi/ by catppuccin/apply.sh. */
+* {
+  base:      #1e1e2e;
+  mantle:    #181825;
+  crust:     #11111b;
+  surface0:  #313244;
+  surface1:  #45475a;
+  text:      #cdd6f4;
+  subtext:   #a6adc8;
+  overlay:   #6c7086;
+  mauve:     #cba6f7;
+  blue:      #89b4fa;
+  red:       #f38ba8;
+  green:     #a6e3a1;
+  yellow:    #f9e2af;
+  pink:      #f5c2e7;
+
+  background-color: transparent;
+  font: "FiraCode Nerd Font 11";
+}
+
+window {
+  background-color: @base;
+  border: 1px solid @surface1;
+  border-radius: 14px;
+  width: 640px;
+  padding: 12px;
+}
+
+mainbox { children: [ inputbar, listview ]; spacing: 8px; }
+
+inputbar {
+  background-color: @mantle;
+  border: 1px solid @surface1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  children: [ prompt, entry ];
+  spacing: 8px;
+}
+prompt  { text-color: @mauve; }
+entry   { text-color: @text; placeholder: "Type to search…"; placeholder-color: @overlay; }
+
+listview {
+  lines: 10;
+  columns: 1;
+  spacing: 2px;
+  scrollbar: false;
+  dynamic: true;
+}
+
+element {
+  background-color: transparent;
+  text-color: @text;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+element normal.normal { background-color: transparent; text-color: @text; }
+element alternate.normal { background-color: transparent; text-color: @text; }
+element selected.normal { background-color: @surface0; text-color: @text; border-left: 3px solid @mauve; }
+element-text { highlight: bold #f38ba8; }

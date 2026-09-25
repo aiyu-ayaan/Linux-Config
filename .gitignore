@@ -8,3 +8,6 @@ zsh/desktop/src/
 __pycache__/
 *.pyc
 *.zwc
+
+# Built by gnome/apply.sh
+gschemas.compiled

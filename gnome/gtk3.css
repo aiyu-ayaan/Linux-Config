@@ -79,3 +79,42 @@ notebook > header.top > tabs > tab button:hover { background: @ctp_red; color: @
 /* Rounded window corners (needs a compositor, which GNOME has) */
 window.csd { border-radius: 12px; }
 window.csd decoration { border-radius: 12px; }
+
+/* Nemo / Nautilus / Caja sidebar + views (GTK3 file managers) */
+.nemo-window .sidebar, .nemo-window .places-treeview,
+.nautilus-window .sidebar, placessidebar {
+  background: @ctp_mantle;
+  color: @ctp_text;
+}
+.nemo-window .sidebar row:selected, placessidebar row:selected {
+  background: @ctp_surf0;
+  border-left: 3px solid @ctp_mauve;
+  color: @ctp_text;
+  border-radius: 0 8px 8px 0;
+}
+.nemo-window .view, .nemo-window grid {
+  background: @ctp_base;
+  color: @ctp_text;
+}
+.nemo-window .view:selected {
+  background: @ctp_surf0;
+}
+/* Entries / OSD-adjacent popups */
+entry {
+  background: @ctp_crust;
+  color: @ctp_text;
+  border: 1px solid @ctp_surf0;
+  border-radius: 8px;
+}
+entry:focus { border-color: @ctp_mauve; }
+popover, popover.background {
+  background: @ctp_surf0;
+  color: @ctp_text;
+  border: 1px solid @ctp_surf1;
+  border-radius: 12px;
+}
+tooltip.background {
+  background: @ctp_surf0;
+  color: @ctp_text;
+  border-radius: 8px;
+}

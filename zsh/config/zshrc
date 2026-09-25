@@ -63,18 +63,50 @@ bindkey '^[[Z' reverse-menu-complete 2>/dev/null
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
-# fzf (Ctrl+R history, Ctrl+T files, Alt+C cd)
+# fzf (Ctrl+R history, Ctrl+T files, Alt+C cd) — Catppuccin Mocha + previews
 if (( $+commands[fzf] )); then
   source <(fzf --zsh 2>/dev/null)
   # Catppuccin Mocha palette
-  export FZF_DEFAULT_OPTS=" --height 40% --layout=reverse --border=rounded \
+  export FZF_DEFAULT_OPTS=" --height 40% --layout=reverse --border=rounded --info=inline --header='  󰍉 fzf' --prompt=' 󰭎 ' --pointer='▶' --marker='✓' \
     --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
     --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
-    --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8,border:#6c7086"
+    --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8,border:#6c7086,separator:#45475a,scrollbar:#45475a"
+  # Preview files with bat, dirs with eza/tree
+  _fzf_preview='if [[ -d {} ]]; then eza --tree --level=2 --icons --group-directories-first {} 2>/dev/null || tree -C -L 2 {} 2>/dev/null || ls -C {}; else bat --style=numbers --color=always {} 2>/dev/null || cat {}; fi'
+  export FZF_CTRL_T_OPTS="--preview '$_fzf_preview' --preview-window=right:55%:wrap --header='  󰈞 files <C-T>' --bind 'ctrl-/:toggle-preview'"
+  export FZF_ALT_C_OPTS="--preview 'eza --tree --level=2 --icons --group-directories-first {} 2>/dev/null || tree -C -L 2 {}' --preview-window=right:55%:wrap --header='  󰉋 dirs <M-C>' --bind 'ctrl-/:toggle-preview'"
+  export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window=down:3:wrap --header='  󰋚 history <C-R>'"
+  # Tab-completion previews: directories, ssh hosts, kill, git
+  _fzf_comprun() {
+    local command=$1; shift
+    case "$command" in
+      cd|z|zi) fzf --preview 'eza --tree --level=2 --icons --group-directories-first {} 2>/dev/null || tree -C -L 2 {}' "$@" ;;
+      ssh|scp|sftp) fzf --preview 'dig {} 2>/dev/null || echo {}' "$@" ;;
+      export|unset) fzf --preview "eval 'echo \$'{}" "$@" ;;
+      *) fzf --preview "$_fzf_preview" "$@" ;;
+    esac
+  }
+  # fzf-backed helpers
+  (( $+commands[bat] )) || (( $+commands[batcat] )) && alias fbat='fzf --preview "bat --style=numbers --color=always {} 2>/dev/null || cat {}" --bind "enter:become(bat {} 2>/dev/null || cat {})"'
 fi
 
 # bat / man pages use the Catppuccin theme (installed by catppuccin/apply.sh)
 export BAT_THEME="Catppuccin Mocha"
+
+# eza colours (Catppuccin Mocha) + LS_COLORS fallback
+export EZA_COLORS="uu=36:gu=37:da=2;34:ur=34:uw=35:ux=32:ue=32:gr=34:gw=35:gx=32:tr=34:tw=35:tx=32:sn=32:sb=32:df=34:di=34:ex=33:xa=33:fi=0:pi=33:so=35:bd=33:cd=33:ln=35:or=31:mi=31:pl=35:xx=90:mp=34:do=35:cr=33:oc=0:ff=0:nb=90:nk=90:nm=90:ng=90:nt=90:rp=34:tl=34:in=90:lp=90:cc=90:bO=90:cA=90:cM=90:cH=90:cU=90"
+export LS_COLORS="di=34:ln=35:so=35:pi=33:ex=33:bd=33:cd=33:su=31:sg=31:tw=35:ow=35:fi=0:*.tar=31:*.zip=31:*.jpg=35:*.png=35:*.mp3=33:*.md=34:*.sh=32"
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# git pager: delta with Catppuccin Mocha (config in catppuccin/delta/delta.gitconfig)
+if (( $+commands[delta] )); then
+  export GIT_PAGER="delta"
+  export DELTA_FEATURES="+catppuccin-mocha"
+fi
+# lazygit / yazi shortcuts (configs installed by catppuccin/apply.sh)
+(( $+commands[lazygit] )) && alias lg='lazygit'
+(( $+commands[yazi] )) && alias y='yazi'
+yazi-cd() { (( $+commands[yazi] )) || return 1; local tmp="$(mktemp -t yazi-cwd.XXXXX)"; yazi --cwd-file="$tmp" "$@"; local cwd="$(cat "$tmp" 2>/dev/null)"; rm -f "$tmp"; [[ -n "$cwd" && "$cwd" != "$PWD" ]] && cd "$cwd"; }
 
 # zoxide: smarter cd  (use `z dir`, `zi` for interactive)
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"

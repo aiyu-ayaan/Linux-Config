@@ -13,7 +13,7 @@ Needs python3-gi + GTK3. Auto-paste uses xdotool when present.
 import os
 # GTK on a Wayland session cannot watch the clipboard from the background or position windows; XWayland can.
 os.environ["GDK_BACKEND"] = "x11"
-import gi, sys, re, json, hashlib, time, shutil, subprocess
+import ast, gi, sys, re, json, hashlib, time, shutil, subprocess
 
 gi.require_version("Gtk", "3.0")
 gi.require_version("Gdk", "3.0")
@@ -92,8 +92,25 @@ def xdotool_path():
     return p if os.path.exists(p) else shutil.which("xdotool")
 
 
+WAYLAND = os.environ.get("XDG_SESSION_TYPE") == "wayland"
+
+
+def bridge(method, *args):
+    """Call the session-bridge GNOME Shell extension (Wayland stand-in for xdotool)."""
+    return subprocess.run(["gdbus", "call", "--session", "--dest", "org.aiyu.SessionBridge",
+                           "--object-path", "/org/aiyu/SessionBridge",
+                           "--method", "org.aiyu.SessionBridge." + method, *map(str, args)],
+                          capture_output=True, text=True, timeout=1).stdout
+
+
 def active_window_info():
     """(class, title) of the focused window, lowercased; ('', '') if unknown."""
+    if WAYLAND:  # xdotool only sees XWayland windows
+        try:
+            cls, title = ast.literal_eval(bridge("ActiveWindow"))
+            return cls.lower(), title.lower()
+        except Exception:
+            return "", ""
     xd = xdotool_path()
     if not xd:
         return "", ""
@@ -388,6 +405,11 @@ class App(Gtk.Application):
         ts = GdkX11.x11_get_server_time(win.get_window())
         win.present_with_time(ts)
         win.get_window().focus(ts)
+        if WAYLAND:  # mutter may refuse X11 focus requests from a background app
+            try:
+                bridge("ActivatePid", os.getpid())
+            except Exception:
+                pass
         self.entry.grab_focus_without_selecting()
         if self.lb:
             self.lb.invalidate_filter()
@@ -568,6 +590,13 @@ class App(Gtk.Application):
         GLib.timeout_add(180, self.autopaste, it["type"])
 
     def autopaste(self, kind):
+        if WAYLAND:
+            is_term = any(t in active_window_info()[0] for t in TERMINALS)
+            try:
+                bridge("Paste", "true" if (is_term and kind == "text") else "false")
+            except Exception:
+                pass
+            return False
         xd = xdotool_path()
         if not xd:
             return False

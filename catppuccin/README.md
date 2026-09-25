@@ -8,9 +8,16 @@ Palette: base `#1e1e2e`, surface `#313244`, text `#cdd6f4`, mauve `#cba6f7`, pin
 | GNOME Terminal + zsh prompt | colour palette, Powerlevel10k segments | terminal profile, [`../zsh/`](../zsh/README.md) |
 | Header bars and tabs (GTK3) | matching flat dark style | [`../gnome/gtk3.css`](../gnome/README.md) |
 | Files, Settings (GTK4) | libadwaita colour overrides | [`../gnome/gtk4.css`](../gnome/README.md) |
-| fzf | full Mocha colour set, rounded border | `zsh/config/zshrc` (`FZF_DEFAULT_OPTS`) |
+| fzf | Mocha colours + Nerd-Font prompt/pointer, bat/eza previews, `Ctrl-/` toggles preview | `zsh/config/zshrc` (`FZF_DEFAULT_OPTS`, `FZF_CTRL_T_OPTS`, `_fzf_comprun`) |
 | bat | `Catppuccin Mocha` syntax theme | `bat/` → `~/.config/bat/themes`, `BAT_THEME` in `zsh/config/zshrc` |
 | btop | `catppuccin_mocha` | `btop/` → `~/.config/btop/themes`, `color_theme` in `btop.conf` |
+| delta | Mocha diff colours, line numbers, `syntax-theme Catppuccin Mocha` | `delta/` → `~/.config/git/catppuccin-delta.gitconfig` (git `include.path`) |
+| lazygit | Mocha borders/selection | `lazygit/` → `~/.config/lazygit/config.yml` (kept if you already have one) |
+| yazi | Mocha manager/status/filetype theme | `yazi/` → `~/.config/yazi/theme.toml` |
+| eza | Mocha `EZA_COLORS` + `LS_COLORS` | `zsh/config/zshrc` |
+| rofi | Mocha drun/run/window theme, `Super+Space` (bound by `gnome/apply.sh` if rofi exists) | `rofi/` → `~/.config/rofi/` |
+| Qt | qt5ct Mocha palette + Adwaita-dark (needs `sudo apt install qt5ct adwaita-qt`) | `qt/` → `~/.config/qt5ct/qt5ct.conf`, env in `~/.config/environment.d/10-qt-mocha.conf` (set by `gnome/apply.sh`) |
+| Chrome | dark WebUI + GTK4 flags | `~/.config/chrome-flags.conf` (set by `gnome/apply.sh`, relaunch Chrome) |
 | VS Code | `Catppuccin.catppuccin-vsc` extension installed | colour theme **not** switched, see below |
 
 ## VS Code

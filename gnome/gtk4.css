@@ -32,3 +32,16 @@
 headerbar button:not(.titlebutton) { border-radius: 999px; }
 headerbar button.titlebutton { border-radius: 999px; }
 headerbar button.titlebutton.close:hover { background: #f38ba8; color: #11111b; }
+
+/* Files (Nautilus) + notifications/popovers polish */
+.navigation-sidebar > row:selected {
+  background: #313244;
+  border-left: 3px solid #cba6f7;
+  border-radius: 0 8px 8px 0;
+}
+entry:focus { border-color: #cba6f7; }
+popover, dialog { border-radius: 12px; }
+tooltip { background: #313244; color: #cdd6f4; border-radius: 8px; }
+/* OSD / volume-hint scale */
+scale highlight { background: #cba6f7; }
+scale slider { background: #cdd6f4; border: none; }

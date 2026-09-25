@@ -1,0 +1,10 @@
+// Rofi config. Installed to ~/.config/rofi/config.rasi by catppuccin/apply.sh.
+// Launch with: rofi -show drun  (bound to Super+Space by gnome/apply.sh)
+configuration {
+  modi: "drun,run,window";
+  show-icons: true;
+  icon-theme: "Papirus-Dark";
+  drun-display-format: "{name}";
+  font: "FiraCode Nerd Font 11";
+}
+@theme "catppuccin-mocha"

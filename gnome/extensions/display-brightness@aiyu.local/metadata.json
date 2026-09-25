@@ -1,0 +1,7 @@
+{
+  "uuid": "display-brightness@aiyu.local",
+  "name": "Display Brightness",
+  "description": "Top-bar brightness sliders for the laptop panel (GNOME backlight) and every DDC/CI monitor (ddcutil). Writes are coalesced per monitor so dragging stays smooth.",
+  "shell-version": ["46"],
+  "settings-schema": "org.gnome.shell.extensions.display-brightness-aiyu"
+}

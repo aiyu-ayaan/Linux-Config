@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.display-brightness-aiyu"
+          path="/org/gnome/shell/extensions/display-brightness-aiyu/">
+    <key name="increase-shortcut" type="as">
+      <default><![CDATA[['<Control>XF86MonBrightnessUp']]]></default>
+      <summary>Raise the brightness of every display</summary>
+    </key>
+    <key name="decrease-shortcut" type="as">
+      <default><![CDATA[['<Control>XF86MonBrightnessDown']]]></default>
+      <summary>Lower the brightness of every display</summary>
+    </key>
+    <key name="step" type="i">
+      <range min="1" max="25"/>
+      <default>5</default>
+      <summary>Percent changed by a shortcut or one scroll step on the icon</summary>
+    </key>
+  </schema>
+</schemalist>

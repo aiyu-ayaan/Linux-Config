@@ -76,6 +76,22 @@ if ! have zoxide; then
   v="$(latest_tag ajeetdsouza/zoxide)"
   curl -fsSL "https://github.com/ajeetdsouza/zoxide/releases/download/$v/zoxide-${v#v}-${ARCH}-unknown-linux-musl.tar.gz" | tar -xz -C "$BIN" zoxide
 fi
+if ! have delta; then
+  v="$(latest_tag dandavison/delta)"
+  curl -fsSL "https://github.com/dandavison/delta/releases/download/$v/delta-$v-${ARCH}-unknown-linux-gnu.tar.gz" | tar -xz -C "$tmp"
+  cp "$tmp"/delta-*/delta "$BIN/delta" 2>/dev/null || echo "skipped: delta install"
+fi
+if ! have lazygit; then
+  v="$(latest_tag jesseduffield/lazygit | sed 's/^v//')"
+  curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/v${v}/lazygit_${v}_Linux_${ARCH}.tar.gz" | tar -xz -C "$BIN" lazygit 2>/dev/null || echo "skipped: lazygit install"
+fi
+if ! have yazi; then
+  v="$(latest_tag sxyazi/yazi)"
+  curl -fsSL "https://github.com/sxyazi/yazi/releases/download/$v/yazi-${ARCH}-unknown-linux-gnu.zip" -o "$tmp/yazi.zip" 2>/dev/null && (cd "$tmp" && unzip -qo yazi.zip) && cp "$tmp"/yazi-*/yazi "$tmp"/yazi-*/ya "$BIN/" 2>/dev/null || echo "skipped: yazi install (needs unzip)"
+fi
+if ! have rofi; then
+  echo "rofi not found — install with: sudo apt install rofi (config is in catppuccin/rofi/, applied by catppuccin/apply.sh)"
+fi
 chmod +x "$BIN"/* 2>/dev/null || true
 
 # ── 4. wire up ~/.zshrc ─────────────────────────────────────────────────

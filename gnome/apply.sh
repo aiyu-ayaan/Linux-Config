@@ -146,10 +146,20 @@ if command -v gnome-extensions >/dev/null; then
   vitals='Vitals@CoreCoding.com'; media='mediacontrols@cliffniff.github.com'; nbpos='notification-position@drugo.dev'
   install_ext 3740 $lamp; install_ext 3193 $blur; install_ext 3843 $jp
   install_ext 1460 $vitals; install_ext 4470 $media; install_ext 4105 $nbpos
-  # Local extension (in this repo): dash click opens a new window on the current workspace
-  iso=workspace-isolation@aiyu.local
-  mkdir -p "$ext_dir" && rm -rf "${ext_dir:?}/$iso" && cp -r "$here/extensions/$iso" "$ext_dir/"
-  for e in $lamp $blur $jp $vitals $media $nbpos $iso; do [ -d "$ext_dir/$e" ] && enable_ext $e; done
+  # Local extensions (in this repo), copied fresh each run:
+  #   workspace-isolation: dash click opens a new window on the current workspace
+  #   audio-output-switcher: top-bar volume + every output port (even ones PipeWire calls unavailable)
+  #   display-brightness: top-bar sliders for the laptop panel and DDC/CI monitors (needs ddcutil + i2c group)
+  iso=workspace-isolation@aiyu.local; audio=audio-output-switcher@aiyu.local; bright=display-brightness@aiyu.local
+  mkdir -p "$ext_dir"
+  for e in $iso $audio $bright; do
+    rm -rf "${ext_dir:?}/${e:?}" && cp -r "$here/extensions/$e" "$ext_dir/"
+    [ -d "$ext_dir/$e/schemas" ] && glib-compile-schemas "$ext_dir/$e/schemas"
+  done
+  # display-brightness replaces the upstream ddcutil extension; keep only one on the top bar
+  old_bright=display-brightness-ddcutil@themightydeity.github.com
+  gnome-extensions disable $old_bright 2>/dev/null || true
+  for e in $lamp $blur $jp $vitals $media $nbpos $iso $audio $bright; do [ -d "$ext_dir/$e" ] && enable_ext $e; done
 
   if [ -d "$ext_dir/$jp" ]; then
     j() { ext_set $jp org.gnome.shell.extensions.just-perfection "$@"; }

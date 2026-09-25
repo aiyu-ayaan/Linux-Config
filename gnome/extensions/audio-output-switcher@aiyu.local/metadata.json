@@ -1,0 +1,6 @@
+{
+  "uuid": "audio-output-switcher@aiyu.local",
+  "name": "Audio Output Switcher",
+  "description": "Top-bar sound menu: volume slider with mute, and every audio output port (including ones PipeWire marks unavailable, like laptop speakers with a misdetected headphone jack).",
+  "shell-version": ["46"]
+}
