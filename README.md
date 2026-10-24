@@ -17,6 +17,7 @@ Primary monitor of the current setup (GNOME 46 on X11, Linux Mint 22.3): compact
 | [`clipsnip/`](clipsnip/README.md) | Windows-style clipboard history (**Win+V**) and snipping (**Win+Shift+S**) for X11. Shortcut backends for GNOME, Cinnamon and Xfce. |
 | [`catppuccin/`](catppuccin/README.md) | Catppuccin Mocha theme for btop, bat and VS Code (fzf and the terminal are in the zsh kit). `catppuccin/apply.sh` installs it. |
 | [`gnome/`](gnome/README.md) | GNOME kit: dark theme, Papirus icons, cursor, title buttons, compact blurred top bar, GTK3/GTK4 Catppuccin styling, workspaces (`ws-add` / `ws-close`) with per-workspace app isolation (local extension `workspace-isolation`), top-bar sound menu (volume + output switcher) and brightness menu for the laptop panel and DDC/CI monitors (local extensions), tiling, genie minimise animation, apps open on the primary monitor (local extension `open-on-primary`), touchpad gestures (touchegg), power-profile switching and low-battery warnings, autostart entries, and a Material 3 Expressive refresh with wallpaper-based colours for the shell (`material-you`). `gnome/apply.sh` reapplies it. |
+| [`perf/`](perf/README.md) | System performance (root): zram swap, earlyoom against out-of-memory freezes, 3 s GRUB menu, optional `mitigations=off`; notes on what is already maxed and on thermal throttling. `sudo bash perf/apply.sh`. |
 | [`docs/hybrid-gpu-monitors.md`](docs/hybrid-gpu-monitors.md) | Intel + NVIDIA laptop with external monitors: `prime-select nvidia` on X11 (and the Wayland udev alternative), login screen and new apps on the primary monitor. |
 | [`docs/gnome-workspaces.md`](docs/gnome-workspaces.md) | GNOME workspace shortcuts and Fedora-style tweaks applied with `gsettings`, plus undo commands. |
 
@@ -36,6 +37,9 @@ Primary monitor of the current setup (GNOME 46 on X11, Linux Mint 22.3): compact
 
     # GNOME settings: dark theme, workspaces, shortcuts
     bash gnome/apply.sh
+
+    # System performance (root): zram, earlyoom, faster boot menu
+    sudo bash perf/apply.sh
 
 Installers are safe to re-run. See each kit's README for options such as `--uninstall`, `--purge` and `--shortcuts`
 (clipsnip), and for restoring the previous look (`zsh/desktop/restore-old-look.sh`).
