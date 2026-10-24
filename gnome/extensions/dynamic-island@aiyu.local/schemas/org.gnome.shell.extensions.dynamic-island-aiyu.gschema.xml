@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.dynamic-island-aiyu"
+          path="/org/gnome/shell/extensions/dynamic-island-aiyu/">
+    <key name="replace-osd" type="b">
+      <default>true</default>
+      <summary>Show volume, brightness and other OSD popups in the island instead of the centre of the screen</summary>
+    </key>
+    <key name="notification-peek" type="b">
+      <default>true</default>
+      <summary>Briefly show new notifications in the island (GNOME banners still appear)</summary>
+    </key>
+    <key name="workspace-peek" type="b">
+      <default>true</default>
+      <summary>Show the workspace indicator in the island on a workspace switch, instead of GNOME's switcher popup</summary>
+    </key>
+    <key name="media-peek" type="b">
+      <default>true</default>
+      <summary>Expand the island for a few seconds when a new track starts</summary>
+    </key>
+  </schema>
+</schemalist>

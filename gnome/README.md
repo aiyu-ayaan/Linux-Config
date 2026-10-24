@@ -24,6 +24,8 @@ Deeper detail: [`../docs/gnome-workspaces.md`](../docs/gnome-workspaces.md).
 | Notifications / OSD | banners on, lock-screen banners off; banner position via extension | `org.gnome.desktop.notifications`, `notification-position@drugo.dev` |
 | Top bar monitor | Vitals: CPU / mem / net / system in panel | `Vitals@CoreCoding.com` (#1460) |
 | Media controls | MPRIS controls + track slider in panel | `mediacontrols@cliffniff.github.com` (#4470) |
+| Material You look | Material 3 Expressive shell styling with a dark colour scheme generated from the wallpaper; spring popup motion | `extensions/material-you@aiyu.local` (see below) |
+| Dynamic Island | Top-centre pill replacing the clock; morphs into the volume / brightness OSD, the playing track, notification previews and a workspace indicator | `extensions/dynamic-island@aiyu.local` (see below) |
 | Sound menu | Volume slider + mute, and every output port (speakers, headphones, USB, HDMI) with a check on the active one | `extensions/audio-output-switcher@aiyu.local` (see below) |
 | Brightness menu | One slider per display (laptop panel + DDC/CI monitors), "All displays" slider, `Ctrl+Brightness keys` for all monitors | `extensions/display-brightness@aiyu.local` (see below) |
 | Multi-monitor | Launched apps open on the primary monitor, not the one under the mouse (Windows 11 style); login screen uses the session's layout and primary monitor | `extensions/open-on-primary@aiyu.local`, `login-monitors.sh` (root, run by hand). See [`../docs/hybrid-gpu-monitors.md`](../docs/hybrid-gpu-monitors.md), which also covers the NVIDIA / Intel GPU setup |
@@ -92,6 +94,54 @@ with ~450 ms DDC sleeps, so the slider lagged and jumped. **On Wayland, log out 
 - Check logs: `journalctl --user -b | grep -E 'display-brightness|audio-output-switcher'`.
 - Undo: `gnome-extensions disable display-brightness@aiyu.local` (or `audio-output-switcher@aiyu.local`).
 
+## Material You and Dynamic Island (local extensions)
+Added on 2026-10-25: an Android-style Material 3 Expressive refresh of GNOME Shell, built as two local extensions instead of
+a different shell (Quickshell / Clavis need a Wayland compositor such as niri or Hyprland and do not run inside GNOME).
+Design rules follow Material 3 (tonal palettes, M3 shape scale, Expressive spring motion). **Workspaces are not touched**:
+the island only reads the active workspace; fixed workspaces, isolation, `ws-add` / `ws-close`, shortcuts and gestures
+are unchanged. Restart the shell once after installing (`Alt+F2`, `r`, Enter on X11).
+
+**`material-you@aiyu.local`** (wallpaper-based theme)
+- Reads the dark wallpaper (`picture-uri-dark`, else `picture-uri`) at 96 px, finds the most colourful hue family and
+  builds M3 tonal palettes from it in CIE LCh, where tone = L\* as in M3: primary, secondary (low chroma), tertiary
+  (hue + 60), neutral and neutral-variant. Roles use the M3 dark tones (primary 80, on-primary 20, containers 30,
+  surfaces 4 / 10 / 12 / 17 / 22, on-surface 90, outline 60 / 30). A grey wallpaper falls back to the M3 baseline purple.
+- Writes `~/.cache/material-you-aiyu/shell.css` (loaded into the shell; regenerated when the wallpaper changes, no
+  restart) and `colors.json` (every role as hex, for other tools).
+- Styles: pill top-bar buttons with tonal hover; menus as 28 px surface-container cards with pill items; quick settings
+  as a 32 px card where tiles are 20 px rounded squares that morph into a full pill when switched on (and squeeze to
+  12 px while pressed); split toggles get small inner corners and a 2 px gap; thick 12 px sliders whose handle sits in
+  a gap; calendar, notification list, banners, Alt+Tab, overview search and OSD in the same palette.
+- Motion: menus and popovers open with an overshoot from the arrow side (`EASE_OUT_BACK`, 380 ms) and close with a short
+  shrink (150 ms). Respects GNOME's "Animations" switch.
+- GTK apps keep the Catppuccin styling from `gtk3.css` / `gtk4.css`; only the shell follows the wallpaper.
+
+**`dynamic-island@aiyu.local`** (top-centre pill on the primary monitor)
+- Resting state: the clock (taken from the date menu, so the format is GNOME's). Click it to open the calendar and
+  notifications. While media plays it also shows the cover and animated level bars.
+- Volume / brightness / other OSD (`Main.osdWindowManager`, so also the local sound and brightness menus): icon, level
+  bar and percentage inside the island instead of the centre of the screen. Over-amplified volume shows in the error colour.
+- Media (MPRIS): a new track expands the island into a card (cover, title, artist, previous / play-pause / next) for 4 s.
+  Hover the island to keep the card open; click the card to raise the player. The play button morphs from circle
+  (paused) to rounded square (playing).
+- Notifications: a 4 s preview (icon, title, first line); click it to activate the notification. GNOME banners still
+  appear as before (they hold actions and replies). Same filters as banners: Do Not Disturb, per-app settings, low urgency.
+- Workspace switch: workspace name (`org.gnome.desktop.wm.preferences workspace-names`, else "Workspace N") and page dots
+  with the active one stretched. GNOME's own switcher popup is hidden while this is on.
+- Motion: size and position run on a damped spring (mass 1), the M3 Expressive motion scheme values: growing uses the
+  bouncy fast-spatial spring (damping 0.6, stiffness 800), shrinking the default-spatial one (0.8, 380). The corner
+  radius follows the height, so the pill morphs into a rounded card (max 32 px). Content cross-fades with an
+  emphasized exit / enter. Hidden over fullscreen windows; off on the lock screen.
+- Settings: `GSETTINGS_SCHEMA_DIR=~/.local/share/gnome-shell/extensions/dynamic-island@aiyu.local/schemas gsettings set
+  org.gnome.shell.extensions.dynamic-island-aiyu <key> false` with keys `replace-osd`, `notification-peek`,
+  `workspace-peek`, `media-peek` (all on by default).
+- The level bars repaint the island every frame while music plays (small area, but not free). The panel's Media Controls
+  extension now duplicates the island; disable it if you prefer the island alone:
+  `gnome-extensions disable mediacontrols@cliffniff.github.com`.
+- Logs: `journalctl --user -b | grep -Ei 'material-you|dynamic-island'`.
+- Undo: `gnome-extensions disable dynamic-island@aiyu.local material-you@aiyu.local` (one uuid per call if needed),
+  then `rm -r ~/.cache/material-you-aiyu`.
+
 ## Multi-monitor placement (local extension + login screen)
 **`open-on-primary@aiyu.local`**: a new window moves to the primary monitor when it is the app's first window or the app
 was just launched from the dash, dock, overview or search. Dialogs and windows an open app creates itself (`Ctrl+N`, a
@@ -157,7 +207,7 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
 
 ## Not scripted (machine-specific)
 - Wallpaper / lock screen image: `~/.local/share/backgrounds/`, set via `org.gnome.desktop.background picture-uri(-dark)`.
-- GNOME Shell extensions enabled: magic lamp effect, Blur my Shell and Just Perfection, plus the local sound and brightness menus and open-on-primary; Extension Manager and Tweaks are installed.
+- GNOME Shell extensions enabled: magic lamp effect, Blur my Shell and Just Perfection, plus the local sound and brightness menus, open-on-primary, material-you and dynamic-island; Extension Manager and Tweaks are installed.
 - Dock favourites: Files, Chrome, Terminal, VS Code.
 
 ## Undo
@@ -173,3 +223,4 @@ These differ from the package defaults (which use 3-finger swipes for maximise/t
     dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ws-close/
     dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/toggle-desktop/
     rm ~/.local/bin/ws-add ~/.local/bin/ws-close ~/.local/bin/toggle-desktop
+    gnome-extensions disable dynamic-island@aiyu.local; gnome-extensions disable material-you@aiyu.local

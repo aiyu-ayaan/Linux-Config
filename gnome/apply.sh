@@ -151,17 +151,19 @@ if command -v gnome-extensions >/dev/null; then
   #   audio-output-switcher: top-bar volume + every output port (even ones PipeWire calls unavailable)
   #   display-brightness: top-bar sliders for the laptop panel and DDC/CI monitors (needs ddcutil + i2c group)
   #   open-on-primary: launched apps open on the primary monitor, not the one under the mouse (Windows 11 style)
+  #   material-you: Material 3 Expressive shell look, colours generated from the wallpaper
+  #   dynamic-island: top-centre pill for clock, OSD, media, notifications, workspace switches
   iso=workspace-isolation@aiyu.local; audio=audio-output-switcher@aiyu.local; bright=display-brightness@aiyu.local
-  primary=open-on-primary@aiyu.local
+  primary=open-on-primary@aiyu.local; m3=material-you@aiyu.local; island=dynamic-island@aiyu.local
   mkdir -p "$ext_dir"
-  for e in $iso $audio $bright $primary; do
+  for e in $iso $audio $bright $primary $m3 $island; do
     rm -rf "${ext_dir:?}/${e:?}" && cp -r "$here/extensions/$e" "$ext_dir/"
     [ -d "$ext_dir/$e/schemas" ] && glib-compile-schemas "$ext_dir/$e/schemas"
   done
   # display-brightness replaces the upstream ddcutil extension; keep only one on the top bar
   old_bright=display-brightness-ddcutil@themightydeity.github.com
   gnome-extensions disable $old_bright 2>/dev/null || true
-  for e in $lamp $blur $jp $vitals $media $nbpos $iso $audio $bright $primary; do [ -d "$ext_dir/$e" ] && enable_ext $e; done
+  for e in $lamp $blur $jp $vitals $media $nbpos $iso $audio $bright $primary $m3 $island; do [ -d "$ext_dir/$e" ] && enable_ext $e; done
 
   if [ -d "$ext_dir/$jp" ]; then
     j() { ext_set $jp org.gnome.shell.extensions.just-perfection "$@"; }

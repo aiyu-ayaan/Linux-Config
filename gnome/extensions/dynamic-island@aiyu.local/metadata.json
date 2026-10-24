@@ -1,0 +1,7 @@
+{
+  "uuid": "dynamic-island@aiyu.local",
+  "name": "Dynamic Island",
+  "description": "A pill at the top centre of the primary monitor that replaces the clock and morphs, with spring animations, into the volume / brightness OSD, the playing track (hover for controls), notification previews and a workspace indicator. Workspaces are only read, never changed.",
+  "settings-schema": "org.gnome.shell.extensions.dynamic-island-aiyu",
+  "shell-version": ["46"]
+}
