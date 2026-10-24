@@ -1,6 +1,6 @@
 {
   "uuid": "material-you@aiyu.local",
   "name": "Material You",
-  "description": "Material 3 Expressive look for GNOME Shell: a dark colour scheme generated from the wallpaper (tonal palettes, tone = CIELAB L*), M3 shapes for menus, quick settings, notifications, Alt+Tab and sliders (toggles morph to a pill when on), and spring-like popup motion. Also colours the dynamic-island@aiyu.local island.",
+  "description": "Material 3 Expressive look for GNOME Shell: a dark colour scheme generated from the wallpaper (tonal palettes, tone = CIELAB L*), M3 shapes for menus, quick settings, notifications, Alt+Tab and sliders (toggles morph to a pill when on), and spring-like popup motion.",
   "shell-version": ["46"]
 }

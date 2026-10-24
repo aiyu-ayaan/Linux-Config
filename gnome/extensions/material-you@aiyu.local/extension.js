@@ -211,20 +211,6 @@ function shellCss(c) {
 .search-entry { background-color: ${h('surfaceContainerHigh')}; border-radius: 999px; color: ${h('onSurface')}; }
 .search-entry:focus { box-shadow: inset 0 0 0 2px ${h('primary')}; background-color: ${h('surfaceContainerHighest')}; }
 
-/* Dynamic island (dynamic-island@aiyu.local) */
-.dynamic-island { background-color: ${h('surfaceContainerLowest')}; color: ${h('onSurface')};
-  border: 1px solid ${rgba(c.outlineVariant, 0.6)}; }
-.dynamic-island .island-bar, .dynamic-island .island-level-fill, .dynamic-island .island-dot.active {
-  background-color: ${h('primary')}; }
-.dynamic-island .island-osd-icon { color: ${h('primary')}; }
-.dynamic-island .island-level { background-color: ${h('secondaryContainer')}; }
-.dynamic-island .island-level-fill.overdrive { background-color: ${hex(c.error)}; }
-.dynamic-island .island-dot { background-color: ${h('outlineVariant')}; }
-.dynamic-island .island-body { color: ${h('onSurfaceVariant')}; }
-.dynamic-island .island-media-button { color: ${h('onSurface')}; }
-.dynamic-island .island-play { background-color: ${h('primary')}; color: ${h('onPrimary')}; }
-.dynamic-island .island-play:hover { background-color: ${h('primaryHover')}; }
-.dynamic-island .island-play:active { background-color: ${h('primaryPressed')}; }
 `;
 }
 
